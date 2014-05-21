@@ -10,20 +10,31 @@
     //global vars
     var isDown = false;
     var facingRight = true;
+    //constants
+    Q.SPRITE_PLAYER = 1;
+    Q.SPRITE_COLLECTABLE = 2;
+    Q.SPRITE_ENEMY = 4;
+    Q.SPRITE_DOOR = 8;
     //Player class
     Q.Sprite.extend("Player",{
         init: function(p){
             this._super(p, {
                 sheet: "platformer_sprites0",
                 sprite: "platformer_sprites0",
+                type: Q.SPRITE_PLAYER,
                 frame: 34,
+                strength: 100,
                 hitPoints: 10,
+                standingPoints: [ [-16, 0], [32, -32 ], [-32, 32 ], [16, 0]],
                 damage: 5,
                 x: 5,
-                y: 1
+                y: 1,
+                collisionMask: Q.SPRITE_DEFAULT
             });
+            this.p.points = this.p.standingPoints;
             this.add("2d, animation");
             this.add('platformerControls');
+            this.on("enemy.hit","enemyHit");
             Q.sheet("platformer_sprites0", "platformer_sprites0.png",{
                 tilew: 64,
                 tileh: 64
@@ -31,6 +42,17 @@
             Q.input.keyboardControls({
                 DOWN: "goDown"
             });
+        },
+        enemyHit: function(data){
+            var col = data.col;
+            var enemy = data.enemy;
+            if(col.normalX == 1){
+                //hit from left
+                this.p.x -= 10;
+            }else{
+                //hit from right
+                this.p.x += 10;
+            }
         },
         step: function(delta){
             if(this.p.vx > 0){
@@ -79,14 +101,22 @@ Q.Sprite.extend("Enemy", {
         this._super(p, {
             sheet: "ghost_25_35",
             sprite: "ghost_25_35",
+            type: Q.SPRITE_ENEMY,
             frame: 1,
             //speed:300,
-            defaultDirection: 'left',
             vx: -100,
-            flip: "x"
             //ax: -100
+            collisionMask: Q.SPRITE_DEFAULT,
         });
         this.add("2d, aiBounce, animation"); 
+        this.on("hit.sprite",this,"hit");
+    },
+    hit: function(col) {
+        console.log(col.obj.p.cx +", " + this.p.cx);
+        if(col.obj.isA("Player") && !this.p.dead && col.obj.p.cx - this.p.cx < 5) {
+            col.obj.trigger('enemy.hit', {"enemy":this,"col":col});
+            console.log(col.obj.p.cx +", " + this.p.cx);
+        }
     },
     step: function(dt) {
         if(this.p.dead) {
@@ -98,8 +128,12 @@ Q.Sprite.extend("Enemy", {
             }
             return;
         }
-
-        //this.play('walk');
+        if(this.p.vx < 0){
+          this.play('enemy_walk_left');  
+        }else{
+          this.play("enemy_walk_right");
+        }
+        
     },
 });
 // Load TMX File as a scene
@@ -128,6 +162,10 @@ Q.loadTMX("underground.tmx", function(){
             get_down_left: {frames:[17,18,19,20,21,22], rate: 1/8, flip:"x", loop:false},
             down_right: {frames: [22], rate: 1, flip:false, loop:true},
             down_left: {frames: [22], rate: 1, flip:"x", loop:true},
+        });
+        Q.animations("ghost_25_35",{
+            enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
+            enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
         });
 
 });
