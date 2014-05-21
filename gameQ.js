@@ -10,6 +10,7 @@
     //global vars
     var isDown = false;
     var facingRight = true;
+    //Player class
     Q.Sprite.extend("Player",{
         init: function(p){
             this._super(p, {
@@ -32,56 +33,87 @@
             });
         },
         step: function(delta){
-                if(this.p.vx > 0){
-                    facingRight = true;
-                    if(this.p.landed > 0) {this.play("walk_right");}
-                    else {this.play("jump_right");}
-                }else if(this.p.vx < 0){
-                    facingRight = false;
-                    if(this.p.landed > 0) { this.play("walk_left");}
-                    else{this.play("jump_left");}
-                }else if(this.p.vx == 0 && this.p.landed <= 0){
-                    if(facingRight){
-                        this.play("jump_up_facingRight");
-                    }else{
-                        this.play("jump_up_faingLeft");
-                    }
-                }else if(Q.inputs['goDown']){
-                    if(isDown){
-                        isDown = true;
-                        if(facingRight){
-                            this.play("down_right");
-                        }else{
-                            this.play("down_left");
-                        }
-                    }else if(this.p.vx == 0 && this.p.vy == 0 && this.p.landed > 0){
-                        isDown = true;
-                        if(facingRight){
-                           this.play("get_down_right");  
-                        }else{
-                           this.play("get_down_left");  
-                        }                                
-                    }
-                }else if(!Q.inputs["goDown"]){
-                    isDown = false;
-                    if(facingRight){
-                        this.play("stand_right");
-                    }else{
-                        this.play("stand_left");
-                    }
+            if(this.p.vx > 0){
+                facingRight = true;
+                if(this.p.landed > 0) {this.play("walk_right");}
+                else {this.play("jump_right");}
+            }else if(this.p.vx < 0){
+                facingRight = false;
+                if(this.p.landed > 0) { this.play("walk_left");}
+                else{this.play("jump_left");}
+            }else if(this.p.vx == 0 && this.p.landed <= 0){
+                if(facingRight){
+                    this.play("jump_up_facingRight");
+                }else{
+                    this.play("jump_up_faingLeft");
                 }
-            },
-     });
+            }else if(Q.inputs['goDown']){
+                if(isDown){
+                    isDown = true;
+                    if(facingRight){
+                        this.play("down_right");
+                    }else{
+                        this.play("down_left");
+                    }
+                }else if(this.p.vx == 0 && this.p.vy == 0 && this.p.landed > 0){
+                    isDown = true;
+                    if(facingRight){
+                       this.play("get_down_right");  
+                   }else{
+                       this.play("get_down_left");  
+                   }                                
+               }
+           }else if(!Q.inputs["goDown"]){
+            isDown = false;
+            if(facingRight){
+                this.play("stand_right");
+            }else{
+                this.play("stand_left");
+            }
+        }
+    },
+});
+//Enemy class
+Q.Sprite.extend("Enemy", {
+    init: function(p){
+        this._super(p, {
+            sheet: "ghost_25_35",
+            sprite: "ghost_25_35",
+            frame: 1,
+            //speed:300,
+            defaultDirection: 'left',
+            vx: -100,
+            flip: "x"
+            //ax: -100
+        });
+        this.add("2d, aiBounce, animation"); 
+    },
+    step: function(dt) {
+        if(this.p.dead) {
+            this.del('2d, aiBounce');
+            this.p.deadTimer++;
+            if (this.p.deadTimer > 24) {
+            // Dead for 24 frames, remove it.
+                this.destroy();
+            }
+            return;
+        }
+
+        //this.play('walk');
+    },
+});
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
     var player = Q("Player").first({vx:0,vy:0});
+    var blue_ghost = Q("Enemy").first();
 });
 // Load assets and launch the first scene to start the game
 Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("platformer_sprites0.png");
+    Q.compileSheets("ghost_25_35.png");
     //Q.stageScene("level1");
-    Q.load(["platformer_sprites0.png", "37_walk.jpg"], function(){      
+    Q.load(["platformer_sprites0.png", "37_walk.jpg", "ghost_25_35.png"], function(){      
         Q.animations("platformer_sprites0", {
             walk_right:  { frames: [34,35,36,37], rate: 1/4, flip: false, loop: true, next: 'stand_right' },
             walk_left:   { frames: [34,35,36,37], rate: 1/4, flip: "x",   loop: true, next: 'stand_left' },
@@ -98,8 +130,8 @@ Q.loadTMX("underground.tmx", function(){
             down_left: {frames: [22], rate: 1, flip:"x", loop:true},
         });
 
-    });
-    Q.stageScene("level1");
+});
+Q.stageScene("level1");
 });
 
 
