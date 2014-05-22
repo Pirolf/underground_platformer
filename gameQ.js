@@ -6,7 +6,8 @@
     .touch();                          // Add in touch support (for the UI)
     Q.enableSound();
     Q.setImageSmoothing(false);
-
+    Q.debug = true;
+    Q.debugFull = true;
     //global vars
     var isDown = false;
     var facingRight = true;
@@ -25,15 +26,15 @@
                 frame: 34,
                 strength: 100,
                 hitPoints: 10,
-                standingPoints: [ [-16, 0], [32, -32 ], [-32, 32 ], [16, 0]],
+                standingPoints: [ [8, 0], [16, -32], [-16, 32], [-8, 0]],
                 damage: 5,
+                immune: false,
                 x: 5,
                 y: 1,
                 collisionMask: Q.SPRITE_DEFAULT
             });
             this.p.points = this.p.standingPoints;
-            this.add("2d, animation");
-            this.add('platformerControls');
+            this.add("2d, animation, platformerControls, tween");
             this.on("enemy.hit","enemyHit");
             Q.sheet("platformer_sprites0", "platformer_sprites0.png",{
                 tilew: 64,
@@ -46,6 +47,14 @@
         enemyHit: function(data){
             var col = data.col;
             var enemy = data.enemy;
+            this.p.immune = true;
+            if(this.p.strength > 0){
+                this.p.strength -= 10;
+            }
+            console.log(this.p.strength);  
+            this.p.immuneTimer = 0;
+            this.p.immuneOpacity = 1;
+            /*
             if(col.normalX == 1){
                 //hit from left
                 this.p.x -= 10;
@@ -53,8 +62,21 @@
                 //hit from right
                 this.p.x += 10;
             }
+            */
         },
         step: function(delta){
+            var processed = false;
+            if (this.p.immune) {               
+                var opacity = (this.p.immuneOpacity == 1 ? 0 : 1);
+                this.animate({"opacity":opacity}, 0);
+                this.p.immuneOpacity = opacity;
+                this.p.immuneTimer++;
+                if (this.p.immuneTimer > 144) {
+                // 3 seconds expired, remove immunity.
+                    this.p.immune = false;
+                    this.animate({"opacity": 1}, 1);
+                }
+            }
             if(this.p.vx > 0){
                 facingRight = true;
                 if(this.p.landed > 0) {this.play("walk_right");}
@@ -112,11 +134,12 @@ Q.Sprite.extend("Enemy", {
         this.on("hit.sprite",this,"hit");
     },
     hit: function(col) {
-        console.log(col.obj.p.cx +", " + this.p.cx);
-        if(col.obj.isA("Player") && !this.p.dead && col.obj.p.cx - this.p.cx < 5) {
+        //console.log(col.obj.p.cx +", " + this.p.cx);
+        if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
             col.obj.trigger('enemy.hit', {"enemy":this,"col":col});
             console.log(col.obj.p.cx +", " + this.p.cx);
         }
+        return;
     },
     step: function(dt) {
         if(this.p.dead) {
