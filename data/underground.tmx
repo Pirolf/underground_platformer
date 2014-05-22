@@ -1266,12 +1266,12 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2165,10 +2165,10 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -30077,6 +30077,12 @@
    <properties>
     <property name="leftBound" value="0"/>
     <property name="rightBound" value="7"/>
+   </properties>
+  </object>
+  <object gid="118" x="685" y="448">
+   <properties>
+    <property name="leftBound" value="8"/>
+    <property name="rightBound" value="11"/>
    </properties>
   </object>
  </objectgroup>

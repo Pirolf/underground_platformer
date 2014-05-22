@@ -25,6 +25,7 @@
                 type: Q.SPRITE_PLAYER,
                 frame: 34,
                 strength: 100,
+                jumpSpeed: -550,
                 hitPoints: 10,
                 standingPoints: [ [8, 0], [16, -32], [-16, 32], [-8, 0]],
                 damage: 5,
@@ -87,11 +88,11 @@
             
             if(this.p.vx > 0){
                 facingRight = true;
-                if(this.p.landed > 0) {this.play("walk_right");}
+                if(this.p.landed > 0) {this.play("run_right");}
                 else {this.play("jump_right");}
             }else if(this.p.vx < 0){
                 facingRight = false;
-                if(this.p.landed > 0) { this.play("walk_left");}
+                if(this.p.landed > 0) { this.play("run_left");}
                 else{this.play("jump_left");}
             }else if(this.p.vx == 0 && this.p.landed <= 0){
                 if(facingRight){
@@ -206,6 +207,8 @@ Q.loadTMX("underground.tmx", function(){
     //Q.stageScene("level1");
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "ghost_25_35.png", "ghost_red_25_35.png"], function(){      
         Q.animations("platformer_sprites0", {
+            run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/4, flip: false, loop: true, next: 'stand_right' },
+            run_left: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/4, flip: "x", loop: true, next: 'stand_right' },
             walk_right:  { frames: [34,35,36,37], rate: 1/4, flip: false, loop: true, next: 'stand_right' },
             walk_left:   { frames: [34,35,36,37], rate: 1/4, flip: "x",   loop: true, next: 'stand_left' },
             jump_right:  { frames: [43,44,44,44,44,44,44,45,45,45,45,46,47], rate: 1/10, next: "stand_right", flip: false },
@@ -213,8 +216,8 @@ Q.loadTMX("underground.tmx", function(){
             jump_up_facingRight: {frames:[51], rate:1/2, loop:false, next: "stand_right"},
             jump_up_faingLeft: {frames:[51], rate:1/2, loop:false, flip:"x", next: "stand_left"},
             stand_front: { frames: [34], flip: false },
-            stand_right: { frames: [34], rate: 1/4, flip: false, loop:false},
-            stand_left:  { frames: [34], rate: 1/4, flip: "x", loop: false},
+            stand_right: { frames: [3], rate: 1/4, flip: false, loop:false},
+            stand_left:  { frames: [3], rate: 1/4, flip: "x", loop: false},
             get_down_right: {frames:[17,18,19,20,21,22], rate: 1/8, loop:false},
             get_down_left: {frames:[17,18,19,20,21,22], rate: 1/8, flip:"x", loop:false},
             down_right: {frames: [22], rate: 1, flip:false, loop:true},
