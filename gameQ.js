@@ -28,7 +28,7 @@
                 jumpSpeed: -550,
                 speed: 400,
                 hitPoints: 10,
-                standingPoints: [ [8, 0], [16, -32], [-16, 32], [-8, 0]],
+                standingPoints: [[8, 0], [8, -32], [8, 32], [-8, 32], [-8, -32],[-8, 0]],
                 damage: 5,
                 immune: false,
                 x: 5,
@@ -143,8 +143,8 @@ Q.Sprite.extend("Enemy", {
             collisionMask: Q.SPRITE_DEFAULT,
         }));
         this.add("2d, aiBounce, animation"); 
-        this.on("hit.sprite",this,"hit");
         this.on("bump.top",this,"die");
+        this.on("hit.sprite",this,"hit");   
     },
     hit: function(col) {
         if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
