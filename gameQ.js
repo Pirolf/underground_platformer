@@ -26,6 +26,7 @@
                 frame: 34,
                 strength: 100,
                 jumpSpeed: -550,
+                speed: 400,
                 hitPoints: 10,
                 standingPoints: [ [8, 0], [16, -32], [-16, 32], [-8, 0]],
                 damage: 5,
@@ -210,6 +211,7 @@ Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
     var player = Q("Player").first({vx:0,vy:0});
     var blue_ghost = Q("Enemy").first();
+    stage.add("viewport").follow(Q("Player").first());
 });
 // Load assets and launch the first scene to start the game
 Q.loadTMX("underground.tmx", function(){
@@ -219,8 +221,8 @@ Q.loadTMX("underground.tmx", function(){
     //Q.stageScene("level1");
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "ghost_25_35.png", "ghost_red_25_35.png"], function(){      
         Q.animations("platformer_sprites0", {
-            run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/4, flip: false, loop: true, next: 'stand_right' },
-            run_left: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/4, flip: "x", loop: true, next: 'stand_right' },
+            run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
+            run_left: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: "x", loop: true, next: 'stand_right' },
             walk_right:  { frames: [34,35,36,37], rate: 1/4, flip: false, loop: true, next: 'stand_right' },
             walk_left:   { frames: [34,35,36,37], rate: 1/4, flip: "x",   loop: true, next: 'stand_left' },
             jump_right:  { frames: [43,44,44,44,44,44,44,45,45,45,45,46,47], rate: 1/10, next: "stand_right", flip: false },
