@@ -143,6 +143,7 @@ Q.Sprite.extend("Enemy", {
         }));
         this.add("2d, aiBounce, animation"); 
         this.on("hit.sprite",this,"hit");
+        this.on("bump.top",this,"die");
     },
     hit: function(col) {
         if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
@@ -150,6 +151,17 @@ Q.Sprite.extend("Enemy", {
             console.log(col.obj.p.cx +", " + this.p.cx);
         }
         return;
+    },
+    die: function(col) {
+        if(col.obj.isA("Player")) {
+            this.p.vx=this.p.vy=0;
+            //TODO: enemy dead anim
+            //this.play('dead');
+            this.p.dead = true;
+            var that = this;
+            col.obj.p.vy = -300;
+            this.p.deadTimer = 0;
+        }
     },
     step: function(dt) {   
         //tile boundary detection
