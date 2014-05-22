@@ -40,7 +40,15 @@
   <image source="../images/ghost_25_35.png" width="125" height="70"/>
   <tile id="0">
    <properties>
-    <property name="Class" value="Enemy"/>
+    <property name="Class" value="Ghost"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="118" name="ghost_red_25_35" tilewidth="25" tileheight="35">
+  <image source="../images/ghost_red_25_35.png" width="125" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="Ghost_red"/>
    </properties>
   </tile>
  </tileset>
@@ -30055,7 +30063,20 @@
   <object gid="71" x="-2" y="255"/>
   <object gid="108" x="289" y="308">
    <properties>
-    <property name="leftBound" value="16"/>
+    <property name="leftBound" value="0"/>
+    <property name="rightBound" value="7"/>
+   </properties>
+  </object>
+  <object gid="108" x="425" y="308">
+   <properties>
+    <property name="leftBound" value="0"/>
+    <property name="rightBound" value="7"/>
+   </properties>
+  </object>
+  <object gid="118" x="104" y="302">
+   <properties>
+    <property name="leftBound" value="0"/>
+    <property name="rightBound" value="7"/>
    </properties>
   </object>
  </objectgroup>

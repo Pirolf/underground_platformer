@@ -127,17 +127,19 @@
 });
 //Enemy class
 Q.Sprite.extend("Enemy", {
-    init: function(p){
-        this._super(p, {
-            sheet: "ghost_25_35",
-            sprite: "ghost_25_35",
+    init: function(p, defaults){
+        //this._super(p, {
+        this._super(p,Q._defaults(defaults||{},{
+            sheet: p.sprite,
+            //sheet: "ghost_25_35",
+            //sprite: "ghost_25_35",
             type: Q.SPRITE_ENEMY,
             frame: 1,
             //speed:300,
             vx: -100,
             //ax: -100
             collisionMask: Q.SPRITE_DEFAULT,
-        });
+        }));
         this.add("2d, aiBounce, animation"); 
         this.on("hit.sprite",this,"hit");
     },
@@ -149,12 +151,16 @@ Q.Sprite.extend("Enemy", {
         return;
     },
     step: function(dt) {   
-        if(this.p.x < this.p.leftBound){
-           this.p.x = this.p.leftBound;
+        //tile boundary detection
+        if(this.p.x - (this.p.w)/2< (this.p.leftBound) * 64){
+           this.p.x = (this.p.leftBound) * 64 + (this.p.w)/2;
            this.p.vx = -this.p.vx;
            this.play("enemy_walk_right");
-        }else
-        if(this.p.dead) {
+        }else if(this.p.x + (this.p.w)/2 > (this.p.rightBound + 1) * 64){
+            this.p.x = (this.p.rightBound + 1) * 64 - (this.p.w)/2;
+            this.p.vx = -this.p.vx;
+            this.play("enemy_walk_left");
+        }else if(this.p.dead) {
             this.del('2d, aiBounce');
             this.p.deadTimer++;
             if (this.p.deadTimer > 24) {
@@ -162,14 +168,29 @@ Q.Sprite.extend("Enemy", {
                 this.destroy();
             }
             return;
-        }else
-        if(this.p.vx < 0){
+        }else if(this.p.vx < 0){
           this.play('enemy_walk_left');  
         }else{
           this.play("enemy_walk_right");
         }
         
     },
+});//End of Enemy
+Q.Enemy.extend("Ghost", {
+    init: function(p){
+        this._super(p, {       
+            sheet: "ghost_25_35",
+            sprite: "ghost_25_35",
+        });
+    }
+});
+Q.Enemy.extend("Ghost_red", {
+    init: function(p){
+        this._super(p, {       
+            sheet: "ghost_red_25_35",
+            sprite: "ghost_red_25_35",
+        });
+    }
 });
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
@@ -181,8 +202,9 @@ Q.scene("level1", function(stage){
 Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("platformer_sprites0.png");
     Q.compileSheets("ghost_25_35.png");
+    Q.compileSheets("ghost_red_25_35.png");
     //Q.stageScene("level1");
-    Q.load(["platformer_sprites0.png", "37_walk.jpg", "ghost_25_35.png"], function(){      
+    Q.load(["platformer_sprites0.png", "37_walk.jpg", "ghost_25_35.png", "ghost_red_25_35.png"], function(){      
         Q.animations("platformer_sprites0", {
             walk_right:  { frames: [34,35,36,37], rate: 1/4, flip: false, loop: true, next: 'stand_right' },
             walk_left:   { frames: [34,35,36,37], rate: 1/4, flip: "x",   loop: true, next: 'stand_left' },
@@ -199,6 +221,10 @@ Q.loadTMX("underground.tmx", function(){
             down_left: {frames: [22], rate: 1, flip:"x", loop:true},
         });
         Q.animations("ghost_25_35",{
+            enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
+            enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
+        });
+        Q.animations("ghost_red_25_35",{
             enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
             enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
         });
