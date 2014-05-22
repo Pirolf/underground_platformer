@@ -30053,6 +30053,10 @@
  </layer>
  <objectgroup name="player" width="300" height="100">
   <object gid="71" x="-2" y="255"/>
-  <object gid="108" x="289" y="308"/>
+  <object gid="108" x="289" y="308">
+   <properties>
+    <property name="leftBound" value="16"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

@@ -57,15 +57,21 @@
             /*
             if(col.normalX == 1){
                 //hit from left
-                this.p.x -= 10;
+                this.p.x += 10;
             }else{
                 //hit from right
-                this.p.x += 10;
+                this.p.x -= 10;
             }
             */
+            
         },
         step: function(delta){
-            var processed = false;
+            var processed = false; 
+            //check left boundary
+            if(this.p.x < 16){
+                this.p.x = 16;
+            }
+            //prevent continuous hitting           
             if (this.p.immune) {               
                 var opacity = (this.p.immuneOpacity == 1 ? 0 : 1);
                 this.animate({"opacity":opacity}, 0);
@@ -77,6 +83,8 @@
                     this.animate({"opacity": 1}, 1);
                 }
             }
+
+            
             if(this.p.vx > 0){
                 facingRight = true;
                 if(this.p.landed > 0) {this.play("walk_right");}
@@ -134,14 +142,18 @@ Q.Sprite.extend("Enemy", {
         this.on("hit.sprite",this,"hit");
     },
     hit: function(col) {
-        //console.log(col.obj.p.cx +", " + this.p.cx);
         if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
             col.obj.trigger('enemy.hit', {"enemy":this,"col":col});
             console.log(col.obj.p.cx +", " + this.p.cx);
         }
         return;
     },
-    step: function(dt) {
+    step: function(dt) {   
+        if(this.p.x < this.p.leftBound){
+           this.p.x = this.p.leftBound;
+           this.p.vx = -this.p.vx;
+           this.play("enemy_walk_right");
+        }else
         if(this.p.dead) {
             this.del('2d, aiBounce');
             this.p.deadTimer++;
@@ -150,7 +162,7 @@ Q.Sprite.extend("Enemy", {
                 this.destroy();
             }
             return;
-        }
+        }else
         if(this.p.vx < 0){
           this.play('enemy_walk_left');  
         }else{
