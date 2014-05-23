@@ -25,6 +25,7 @@
                 type: Q.SPRITE_PLAYER,
                 frame: 34,
                 strength: 100,
+                MAX_STRENGTH: 100,
                 jumpSpeed: -550,
                 speed: 400,
                 hitPoints: 10,
@@ -33,7 +34,7 @@
                 immune: false,
                 x: 5,
                 y: 1,
-                collisionMask: Q.SPRITE_DEFAULT
+                collisionMask: Q.SPRITE_DEFAULT | Q.SPRITE_COLLECTABLE
             });
             this.p.points = this.p.standingPoints;
             this.add("2d, animation, platformerControls, tween");
@@ -45,7 +46,8 @@
             Q.input.keyboardControls({
                 DOWN: "goDown"
             });
-        },
+        }, //end of init 
+
         enemyHit: function(data){
             var col = data.col;
             var enemy = data.enemy;
@@ -127,6 +129,25 @@
         }
     },
 });
+Q.Sprite.extend("Collectable", {
+    init: function(p, defaults) {
+        this._super(p, Q._defaults(defaults||{},{
+           // sheet: p.sprite,
+            type: Q.SPRITE_COLLECTABLE,
+            collisionMask: Q.SPRITE_PLAYER,
+            sensor: true,
+            vx: 0,
+            vy: 0,
+            gravity: 0
+        }));
+        this.add("animation");
+        this.on("sensor");
+    }, //init
+    // When a Collectable is hit.
+    sensor: function(colObj) {
+        //return;
+    }
+});
 //Enemy class
 Q.Sprite.extend("Enemy", {
     init: function(p, defaults){
@@ -206,6 +227,25 @@ Q.Enemy.extend("Ghost_red", {
         });
     }
 });
+Q.Collectable.extend("Potion_red", {
+    init: function(p){
+        this._super(p, {
+            asset: "potion_red_20_20.png",
+            //sprite:"potion_red_12_12",
+            deltaStrength: 5
+        });
+    },
+    sensor: function(colObj){
+        console.log("red potion sensor called");
+        if(colObj.isA("Player")){
+            if(colObj.p.strength <= colObj.p.MAX_STRENGTH - this.p.deltaStrength){
+                colObj.p.strength += this.p.deltaStrength;
+            }
+            this.destroy();
+        }
+        return;
+    }
+});
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
@@ -218,8 +258,13 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("platformer_sprites0.png");
     Q.compileSheets("ghost_25_35.png");
     Q.compileSheets("ghost_red_25_35.png");
+    Q.compileSheets("potion_red_20_20.png");
     //Q.stageScene("level1");
-    Q.load(["platformer_sprites0.png", "37_walk.jpg", "ghost_25_35.png", "ghost_red_25_35.png"], function(){      
+    Q.load(["platformer_sprites0.png", "37_walk.jpg",
+     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png"], function(){     
+        var redPotion = new Q.Potion_red();
+
+  
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
             run_left: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: "x", loop: true, next: 'stand_right' },
@@ -245,7 +290,6 @@ Q.loadTMX("underground.tmx", function(){
             enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
             enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
         });
-
 });
 Q.stageScene("level1");
 });
