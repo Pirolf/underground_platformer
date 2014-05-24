@@ -25,6 +25,7 @@
                 type: Q.SPRITE_PLAYER,
                 frame: 34,
                 strength: 100,
+                score: 0,
                 MAX_STRENGTH: 100,
                 jumpSpeed: -550,
                 speed: 400,
@@ -47,17 +48,24 @@
                 DOWN: "goDown"
             });
         }, //end of init 
-
+        resetLevel: function(){           
+            Q.stageScene("level1");
+            this.p.strength = 100;
+            this.animate({opacity: 1});
+            Q.stageScene('hud', 2, this.p);
+        },
         enemyHit: function(data){
             var col = data.col;
             var enemy = data.enemy;
             this.p.immune = true;
             if(this.p.strength > 0){
                 this.p.strength -= 10;
+                Q.stageScene('hud', 2, this.p);
             }
             console.log(this.p.strength);  
             this.p.immuneTimer = 0;
             this.p.immuneOpacity = 1;
+            
             /*
             if(col.normalX == 1){
                 //hit from left
@@ -67,6 +75,9 @@
                 this.p.x -= 10;
             }
             */
+            if (this.p.strength == 0) {
+                this.resetLevel();
+            }
             
         },
         step: function(delta){
@@ -146,6 +157,7 @@ Q.Sprite.extend("Collectable", {
     // When a Collectable is hit.
     sensor: function(colObj) {
         //return;
+        Q.stageScene("hud", 2, colObj.p);
     }
 });
 //Enemy class
@@ -170,7 +182,7 @@ Q.Sprite.extend("Enemy", {
     hit: function(col) {
         if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
             col.obj.trigger('enemy.hit', {"enemy":this,"col":col});
-            console.log(col.obj.p.cx +", " + this.p.cx);
+           // console.log(col.obj.p.cx +", " + this.p.cx);
         }
         return;
     },
@@ -240,7 +252,10 @@ Q.Collectable.extend("Potion_red", {
         if(colObj.isA("Player")){
             if(colObj.p.strength <= colObj.p.MAX_STRENGTH - this.p.deltaStrength){
                 colObj.p.strength += this.p.deltaStrength;
+                Q.stageScene('hud', 2, colObj.p);
+
             }
+           // colObj.play("stand_front");  
             this.destroy();
         }
         return;
@@ -249,9 +264,22 @@ Q.Collectable.extend("Potion_red", {
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
-    var player = Q("Player").first({vx:0,vy:0});
+    //var player = Q("Player").first({vx:0,vy:0});
     var blue_ghost = Q("Enemy").first();
     stage.add("viewport").follow(Q("Player").first());
+});
+Q.scene('hud',function(stage) {
+  var container = stage.insert(new Q.UI.Container({
+    x: 50, y: 0
+  }));
+
+  var score = container.insert(new Q.UI.Text({x:200, y: 20,
+    label: "Score: " + stage.options.score, color: "white" }));
+
+  var strength = container.insert(new Q.UI.Text({x:50, y: 20,
+    label: "Health: " + stage.options.strength + '%', color: "white" }));
+
+  container.fit(20);
 });
 // Load assets and launch the first scene to start the game
 Q.loadTMX("underground.tmx", function(){
@@ -263,8 +291,6 @@ Q.loadTMX("underground.tmx", function(){
     Q.load(["platformer_sprites0.png", "37_walk.jpg",
      "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png"], function(){     
         var redPotion = new Q.Potion_red();
-
-  
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
             run_left: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: "x", loop: true, next: 'stand_right' },
@@ -290,8 +316,10 @@ Q.loadTMX("underground.tmx", function(){
             enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
             enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
         });
-});
+
 Q.stageScene("level1");
+Q.stageScene('hud', 2, Q('Player').first().p);
+});
 });
 
 
