@@ -60117,6 +60117,7 @@
     <property name="doorId" value="1"/>
    </properties>
   </object>
+  <object gid="12" x="1600" y="832"/>
  </objectgroup>
  <objectgroup name="player" width="300" height="100">
   <object gid="71" x="-2" y="255"/>

@@ -220,7 +220,8 @@ Q.Sprite.extend("Door", {
     //return this.stage.find(this.p.link);
     var results = Q("Door");
     var randomDoorIndex = Math.floor(Math.random() * results.length);
-    while(randomDoorIndex === this.p.doorId){
+    //while(randomDoorIndex === this.p.doorId){
+    while(results.at(randomDoorIndex) === this){
         randomDoorIndex = Math.floor(Math.random() * results.length);
     }
     return results.at(randomDoorIndex);
