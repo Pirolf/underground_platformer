@@ -36,12 +36,13 @@
                 immune: false,
                 x: 5,
                 y: 1,
-                collisionMask: Q.SPRITE_DEFAULT | Q.SPRITE_COLLECTABLE
+                collisionMask: Q.SPRITE_DEFAULT | Q.SPRITE_COLLECTABLE | Q.SPRITE_DOOR 
             });
             this.p.points = this.p.standingPoints;
             this.add("2d, animation, platformerControls, tween");
             this.on("enemy.hit","enemyHit");
             this.on("sensor.tile","checkLadder");
+            Q.input.on("up",this,"checkDoor");
             Q.sheet("platformer_sprites0", "platformer_sprites0.png",{
                 tilew: 64,
                 tileh: 64
@@ -55,6 +56,9 @@
             this.p.strength = 100;
             this.animate({opacity: 1});
             Q.stageScene('hud', 2, this.p);
+        },
+        checkDoor: function(){
+            this.p.checkDoor = true;
         },
         checkLadder: function(colObj){
             if(colObj.p.ladder) { 
@@ -71,8 +75,7 @@
                    this.play("climb_still");
                }else{
                     this.play("stand_" + this.p.direction); 
-               }
-                
+               }                
             }
         },
         enemyHit: function(data){
@@ -127,7 +130,28 @@
                 }
                 processed = true;
                 //this.p.isClimbing = false;
-            } 
+            }
+            //check door 
+            if(!processed && this.p.door) {
+                this.p.gravity = 1;
+                if(this.p.checkDoor && this.p.landed > 0) {
+                // Enter door.
+                    this.p.y = this.p.door.p.y;
+                    this.p.x = this.p.door.p.x;
+                    this.play('climb');
+                    this.p.toDoor = this.p.door.findRandomDoor();
+                    processed = true;
+                }
+                else if (this.p.toDoor) {
+                // Transport to matching door.
+                    this.p.y = this.p.toDoor.p.y;
+                    this.p.x = this.p.toDoor.p.x;
+                    this.stage.centerOn(this.p.x, this.p.y);
+                    this.p.toDoor = false;
+                    this.stage.follow(this);
+                    processed = true;
+                }
+            }//end of door checking
         if(!processed) { 
             this.p.gravity = 1;
             if(this.p.vx > 0){
@@ -170,8 +194,44 @@
             }
         }//end of !processed
         this.p.onLadder = false;
+        this.p.door = false;
+        this.p.checkDoor = false;
     },
 });
+
+Q.Sprite.extend("Door", {
+  init: function(p) {
+    this._super(p,{
+      //sheet: p.sprite,
+      sheet: "underground",
+               sprite: "underground",
+               frame:11,
+      type: Q.SPRITE_DOOR,
+      collisionMask: Q.SPRITE_NONE,
+      sensor: true,
+      vx: 0,
+      vy: 0,
+      gravity: 0
+    });
+    this.add("animation");
+    this.on("sensor");
+  },
+  findRandomDoor: function() {
+    //return this.stage.find(this.p.link);
+    var results = Q("Door");
+    var randomDoorIndex = Math.floor(Math.random() * results.length);
+    while(randomDoorIndex === this.p.doorId){
+        randomDoorIndex = Math.floor(Math.random() * results.length);
+    }
+    return results.at(randomDoorIndex);
+  },
+  // When the player is in the door.
+  sensor: function(colObj) {
+    // Mark the door object on the player.
+    colObj.p.door = this;
+  }
+});
+
 Q.Sprite.extend("Collectable", {
     init: function(p, defaults) {
         this._super(p, Q._defaults(defaults||{},{
