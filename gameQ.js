@@ -30,6 +30,7 @@
                 jumpSpeed: -550,
                 speed: 400,
                 hitPoints: 10,
+                onLadder:false,
                 standingPoints: [[8, 0], [8, -32], [8, 32], [-8, 32], [-8, -32],[-8, 0]],
                 damage: 5,
                 immune: false,
@@ -40,6 +41,7 @@
             this.p.points = this.p.standingPoints;
             this.add("2d, animation, platformerControls, tween");
             this.on("enemy.hit","enemyHit");
+            this.on("sensor.tile","checkLadder");
             Q.sheet("platformer_sprites0", "platformer_sprites0.png",{
                 tilew: 64,
                 tileh: 64
@@ -54,6 +56,25 @@
             this.animate({opacity: 1});
             Q.stageScene('hud', 2, this.p);
         },
+        checkLadder: function(colObj){
+            if(colObj.p.ladder) { 
+                this.p.onLadder = true;
+                this.p.ladderX = colObj.p.x;
+            }
+        },
+        continueOverSensor: function() {
+            this.p.vy = 0;
+            if(this.p.vx != 0) {
+                this.play("run_" + this.p.direction);
+            } else {
+                if(this.p.isClimbing){
+                   this.play("climb_still");
+               }else{
+                    this.play("stand_" + this.p.direction); 
+               }
+                
+            }
+        },
         enemyHit: function(data){
             var col = data.col;
             var enemy = data.enemy;
@@ -65,16 +86,6 @@
             console.log(this.p.strength);  
             this.p.immuneTimer = 0;
             this.p.immuneOpacity = 1;
-            
-            /*
-            if(col.normalX == 1){
-                //hit from left
-                this.p.x += 10;
-            }else{
-                //hit from right
-                this.p.x -= 10;
-            }
-            */
             if (this.p.strength == 0) {
                 this.resetLevel();
             }
@@ -98,8 +109,27 @@
                     this.animate({"opacity": 1}, 1);
                 }
             }
-
-            
+            if(this.p.onLadder) {
+                this.p.gravity = 0;
+                if(Q.inputs['up']) {
+                    this.p.isClimbing = true;
+                    this.p.vy = -this.p.speed;
+                    this.p.x = this.p.ladderX;
+                    this.play("climb");
+                } else if(Q.inputs['goDown']) {
+                    this.p.isClimbing = true;
+                    this.p.vy = this.p.speed;
+                    this.p.x = this.p.ladderX;
+                    this.play("climb");
+                } else {
+                    this.continueOverSensor();
+                    //this.p.isClimbing = false;
+                }
+                processed = true;
+                //this.p.isClimbing = false;
+            } 
+        if(!processed) { 
+            this.p.gravity = 1;
             if(this.p.vx > 0){
                 facingRight = true;
                 if(this.p.landed > 0) {this.play("run_right");}
@@ -114,7 +144,7 @@
                 }else{
                     this.play("jump_up_faingLeft");
                 }
-            }else if(Q.inputs['goDown']){
+            }else if(Q.inputs['goDown'] && !this.p.onLadder){
                 if(isDown){
                     isDown = true;
                     if(facingRight){
@@ -131,13 +161,15 @@
                    }                                
                }
            }else if(!Q.inputs["goDown"]){
-            isDown = false;
-            if(facingRight){
-                this.play("stand_right");
-            }else{
-                this.play("stand_left");
+                isDown = false;
+                if(facingRight){
+                    this.play("stand_right");
+                }else{
+                    this.play("stand_left");
+                }
             }
-        }
+        }//end of !processed
+        this.p.onLadder = false;
     },
 });
 Q.Sprite.extend("Collectable", {
@@ -307,6 +339,8 @@ Q.loadTMX("underground.tmx", function(){
             get_down_left: {frames:[17,18,19,20,21,22], rate: 1/8, flip:"x", loop:false},
             down_right: {frames: [22], rate: 1, flip:false, loop:true},
             down_left: {frames: [22], rate: 1, flip:"x", loop:true},
+            climb: {frames: [26, 27], rate: 1/4, flip:false, loop:true},
+            climb_still: {frames: [26], rate: 1, flip:false, loop:false}
         });
         Q.animations("ghost_25_35",{
             enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
