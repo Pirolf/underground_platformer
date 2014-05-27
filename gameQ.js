@@ -83,7 +83,7 @@
             var enemy = data.enemy;
             this.p.immune = true;
             if(this.p.strength > 0){
-                this.p.strength -= 10;
+                this.p.strength -= enemy.p.damagePoints;
                 Q.stageScene('hud', 2, this.p);
             }
             console.log(this.p.strength);  
@@ -266,6 +266,7 @@ Q.Sprite.extend("Enemy", {
             //speed:300,
             vx: -100,
             //ax: -100
+            damagePoints: 10,
             collisionMask: Q.SPRITE_DEFAULT,
         }));
         this.add("2d, aiBounce, animation"); 
@@ -332,6 +333,18 @@ Q.Enemy.extend("Ghost_red", {
         });
     }
 });
+Q.Enemy.extend("Skeleton", {
+    init: function(p){
+        this._super(p, {       
+            sheet: "skeleton_36_48",
+            sprite: "skeleton_36_48",
+            scale:2,
+            speed: 800,
+            damagePoints:30
+        });
+        //this.size(false);
+    }
+});
 Q.Collectable.extend("Potion_red", {
     init: function(p){
         this._super(p, {
@@ -380,9 +393,10 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("ghost_25_35.png");
     Q.compileSheets("ghost_red_25_35.png");
     Q.compileSheets("potion_red_20_20.png");
+    Q.compileSheets("skeleton_36_48.png");
     //Q.stageScene("level1");
     Q.load(["platformer_sprites0.png", "37_walk.jpg",
-     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png"], function(){     
+     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "skeleton_36_48.png"], function(){     
         var redPotion = new Q.Potion_red();
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
@@ -410,6 +424,10 @@ Q.loadTMX("underground.tmx", function(){
         Q.animations("ghost_red_25_35",{
             enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
             enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
+        });
+        Q.animations("skeleton_36_48",{
+            enemy_walk_left: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:"x", rate:1/12, loop:true},
+            enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true}
         });
 
 Q.stageScene("level1");

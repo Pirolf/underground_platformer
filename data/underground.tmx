@@ -90,7 +90,20 @@
    </properties>
   </tile>
  </tileset>
- <layer name="wall" width="300" height="100">
+ <tileset firstgid="130" name="skeleton_36_48" tilewidth="36" tileheight="48">
+  <image source="../images/skeleton_36_48.png" width="180" height="192"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="Skeleton"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Class" value="Skeleton"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="wall" width="300" height="100" visible="0">
   <properties>
    <property name="collision" value="true"/>
    <property name="collisionMask" value="0"/>
@@ -34616,14 +34629,14 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -60146,5 +60159,11 @@
    </properties>
   </object>
   <object gid="129" x="704" y="256"/>
+  <object gid="131" x="896" y="960">
+   <properties>
+    <property name="leftBound" value="13"/>
+    <property name="rightBound" value="20"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
