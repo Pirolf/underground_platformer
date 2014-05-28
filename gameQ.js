@@ -42,7 +42,8 @@
             this.add("2d, animation, platformerControls, tween");
             this.on("enemy.hit","enemyHit");
             this.on("sensor.tile","checkLadder");
-            Q.input.on("up",this,"checkDoor");
+            
+
             Q.sheet("platformer_sprites0", "platformer_sprites0.png",{
                 tilew: 64,
                 tileh: 64
@@ -50,6 +51,12 @@
             Q.input.keyboardControls({
                 DOWN: "goDown"
             });
+            //bind W to checkDoor  
+            Q.input.keyboardControls({
+                "87": "check_door"
+            });
+            Q.input.on("check_door",this,"checkDoor");
+
         }, //end of init 
         resetLevel: function(){           
             Q.stageScene("level1");
@@ -204,8 +211,8 @@ Q.Sprite.extend("Door", {
     this._super(p,{
       //sheet: p.sprite,
       sheet: "underground",
-               sprite: "underground",
-               frame:11,
+      sprite: "underground",
+      frame:11,
       type: Q.SPRITE_DOOR,
       collisionMask: Q.SPRITE_NONE,
       sensor: true,
