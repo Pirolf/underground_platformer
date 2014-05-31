@@ -91,7 +91,7 @@
   </tile>
  </tileset>
  <tileset firstgid="130" name="skeleton_36_48" tilewidth="36" tileheight="48">
-  <image source="../images/skeleton_36_48.png" width="180" height="192"/>
+  <image source="../images/skeleton-36_48.png" width="180" height="192"/>
   <tile id="0">
    <properties>
     <property name="Class" value="Skeleton"/>
@@ -102,6 +102,9 @@
     <property name="Class" value="Skeleton"/>
    </properties>
   </tile>
+ </tileset>
+ <tileset firstgid="150" name="explosions" tilewidth="45" tileheight="45">
+  <image source="../images/explosionSheet.png" width="225" height="225"/>
  </tileset>
  <layer name="wall" width="300" height="100" visible="0">
   <properties>

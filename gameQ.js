@@ -9,13 +9,14 @@
     Q.debug = true;
     Q.debugFull = true;
     //global vars
-    var isDown = false;
+    //var isDown = false;
     var facingRight = true;
     //constants
     Q.SPRITE_PLAYER = 1;
     Q.SPRITE_COLLECTABLE = 2;
     Q.SPRITE_ENEMY = 4;
     Q.SPRITE_DOOR = 8;
+    Q.SPRITE_BULLET = 16;
     //Player class
     Q.Sprite.extend("Player",{
         init: function(p){
@@ -31,9 +32,13 @@
                 speed: 400,
                 hitPoints: 10,
                 onLadder:false,
+                isCrouching: false,
                 standingPoints: [[8, 0], [8, -32], [8, 32], [-8, 32], [-8, -32],[-8, 0]],
                 damage: 5,
                 immune: false,
+                BULLET_MIN_INTERVAL: 2000,
+                bulletFiredTimer: 2000,
+                facingDir: 1, //1 for right, -1 for left
                 x: 5,
                 y: 1,
                 collisionMask: Q.SPRITE_DEFAULT | Q.SPRITE_COLLECTABLE | Q.SPRITE_DOOR 
@@ -56,8 +61,14 @@
                 "87": "check_door"
             });
             Q.input.on("check_door",this,"checkDoor");
-
+            Q.input.on("fire", this, "fireBullet");
         }, //end of init 
+        __canFire: function(){
+            if(this.p.landed > 0 && !this.p.onLadder && !this.p.isCrouching){
+                return true;
+            }
+            return false;
+        },
         resetLevel: function(){           
             Q.stageScene("level1");
             this.p.strength = 100;
@@ -98,11 +109,30 @@
             this.p.immuneOpacity = 1;
             if (this.p.strength == 0) {
                 this.resetLevel();
-            }
-            
+            }        
         },
+        fireBullet: function(){
+            if(this.__canFire() && this.p.bulletFiredTimer >= this.p.BULLET_MIN_INTERVAL * 12/1000.0){  
+                var p = this.p;
+                var playerDir = this.p.facingDir;
+                var newBullet = new Q.Bullet({ 
+                    x: this.c.points[0][0], 
+                    y: this.c.points[0][1],
+                    vx: playerDir * 200,
+                    vy: 0,
+                    intervalTimer: 0,
+                    shot: true,
+                });
+                this.p.bulletFiredTimer = 0;
+                this.stage.insert(newBullet);   
+            }
+
+        },
+
         step: function(delta){
-            var processed = false; 
+            var processed = false;
+            this.p.bulletFiredTimer++;
+             
             //check left boundary
             if(this.p.x < 16){
                 this.p.x = 16;
@@ -139,7 +169,7 @@
                 //this.p.isClimbing = false;
             }
             //check door 
-            if(!processed && this.p.door) {
+            if(!processed && this.p.door){
                 this.p.gravity = 1;
                 if(this.p.checkDoor && this.p.landed > 0) {
                 // Enter door.
@@ -163,10 +193,12 @@
             this.p.gravity = 1;
             if(this.p.vx > 0){
                 facingRight = true;
+                this.p.facingDir = 1;
                 if(this.p.landed > 0) {this.play("run_right");}
                 else {this.play("jump_right");}
             }else if(this.p.vx < 0){
                 facingRight = false;
+                this.p.facingDir = -1;
                 if(this.p.landed > 0) { this.play("run_left");}
                 else{this.play("jump_left");}
             }else if(this.p.vx == 0 && this.p.landed <= 0){
@@ -176,15 +208,17 @@
                     this.play("jump_up_faingLeft");
                 }
             }else if(Q.inputs['goDown'] && !this.p.onLadder){
-                if(isDown){
-                    isDown = true;
+                if(this.p.isCrouching){
+                   //isDown = true;
+                    this.p.isCrouching = true;
                     if(facingRight){
                         this.play("down_right");
                     }else{
                         this.play("down_left");
                     }
                 }else if(this.p.vx == 0 && this.p.vy == 0 && this.p.landed > 0){
-                    isDown = true;
+                   // isDown = true;
+                    this.p.isCrouching = true;
                     if(facingRight){
                        this.play("get_down_right");  
                    }else{
@@ -192,7 +226,8 @@
                    }                                
                }
            }else if(!Q.inputs["goDown"]){
-                isDown = false;
+                //isDown = false;
+                this.p.isCrouching = false;
                 if(facingRight){
                     this.play("stand_right");
                 }else{
@@ -201,11 +236,66 @@
             }
         }//end of !processed
         this.p.onLadder = false;
+       // this.p.isCrouching = false;
         this.p.door = false;
         this.p.checkDoor = false;
     },
 });
 
+Q.Sprite.extend("Bullet", {
+    init: function(p){
+        this._super(p, {
+            sheet: "explosions",
+            sprite: "explosions",           
+            type: Q.SPRITE_BULLET,
+            collisionMask: Q.SPRITE_ENEMY,
+            intervalInMS: 1000, //max life of a bullet
+            intervalTimer: 0,
+            hitTimer: 0,
+            damageVal: 10,
+            hasHit: false,
+            vx: 500,
+            vy: 0,
+            gravity: 0,
+            shot: true,
+        });
+        this.add("2d, animation");
+        this.on("hit.sprite",this,"hitEnemy"); 
+        this.on("hit.tile", this, "hitEnemy");
+    },
+    hitEnemy: function(col){
+        var colObj = col.obj;
+        if(colObj.p.type === Q.SPRITE_ENEMY) {
+            colObj.trigger('bullet.hit', {"bulletObj":this});
+            console.log("bullet.hit triggered");
+        }
+        this.p.hasHit = true;
+        
+       // this.destroy();
+       // return;
+    },
+    step: function(delta){
+        if(!this.p.hasHit){
+             if( this.p.intervalTimer < (this.p.intervalInMS*12)/1000.0){
+                this.p.intervalTimer++;
+                this.play("bullet_shoot");
+             }else{
+                this.destroy();
+             }
+        }else if(this.p.hasHit){
+            this.p.hitTimer++;
+            if(this.p.hitTimer >= 8){
+                this.destroy();
+            }else{
+                this.play("bullet_hit");
+            }
+            //this.destroy();
+        }else{
+            //this.p.intervalTimer = 0;
+            
+        }      
+    },
+});
 Q.Sprite.extend("Door", {
   init: function(p) {
     this._super(p,{
@@ -266,19 +356,27 @@ Q.Sprite.extend("Enemy", {
         //this._super(p, {
         this._super(p,Q._defaults(defaults||{},{
             sheet: p.sprite,
-            //sheet: "ghost_25_35",
-            //sprite: "ghost_25_35",
             type: Q.SPRITE_ENEMY,
             frame: 1,
             //speed:300,
             vx: -100,
+            health: 10,
             //ax: -100
+            hasDeadAnim: false,
             damagePoints: 10,
             collisionMask: Q.SPRITE_DEFAULT,
         }));
         this.add("2d, aiBounce, animation"); 
         this.on("bump.top",this,"die");
-        this.on("hit.sprite",this,"hit");   
+        this.on("hit.sprite",this,"hit"); 
+        this.on("bullet.hit", this, "hitByBullet");  
+    },
+    __getDirection: function(){
+        if(this.p.vx < 0){
+            return "left";
+        }else{
+            return "right";
+        }
     },
     hit: function(col) {
         if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
@@ -287,11 +385,27 @@ Q.Sprite.extend("Enemy", {
         }
         return;
     },
+    hitByBullet: function(data){        
+        var bullet = data.bulletObj;
+        if(this.p.health > 0){
+            this.p.health -= bullet.p.damageVal;
+        }
+        console.log(this.p.health);
+        if (this.p.health <= 0) {
+            var dir = this.__getDirection();
+            console.log(dir);
+            if(this.p.hasDeadAnim){
+               this.play('enemy_dead_' + dir); 
+            }
+            this.destroy();
+        }
+        //this.destroy(); 
+    },
     die: function(col) {
         if(col.obj.isA("Player")) {
             this.p.vx=this.p.vy=0;
             //TODO: enemy dead anim
-            //this.play('dead');
+
             this.p.dead = true;
             var that = this;
             col.obj.p.vy = -300;
@@ -347,7 +461,9 @@ Q.Enemy.extend("Skeleton", {
             sprite: "skeleton_36_48",
             scale:2,
             speed: 800,
-            damagePoints:30
+            damagePoints:30,
+            health: 50,
+            hasDeadAnim: true,
         });
         //this.size(false);
     }
@@ -400,10 +516,11 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("ghost_25_35.png");
     Q.compileSheets("ghost_red_25_35.png");
     Q.compileSheets("potion_red_20_20.png");
-    Q.compileSheets("skeleton_36_48.png");
+    Q.compileSheets("skeleton-36_48.png");
+    Q.compileSheets("explosionSheet.png");
     //Q.stageScene("level1");
-    Q.load(["platformer_sprites0.png", "37_walk.jpg",
-     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "skeleton_36_48.png"], function(){     
+    Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
+     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "skeleton-36_48.png"], function(){     
         var redPotion = new Q.Potion_red();
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
@@ -434,7 +551,14 @@ Q.loadTMX("underground.tmx", function(){
         });
         Q.animations("skeleton_36_48",{
             enemy_walk_left: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:"x", rate:1/12, loop:true},
-            enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true}
+            enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true},
+            enemy_dead_left: {frames:[15,16,17,18,19], flip:"x", rate: 1/5, loop:false},
+            enemy_dead_right:{frames:[15,16,17,18,19], flip:false, rate:1/5, loop:false},
+        });
+        Q.animations("explosions", {
+            bullet_shoot: {frames:[7,6,5,4,3,2,2,2,2,2,2,2,2,2,2,2], rate:1/5, loop:false, next:"bullet_fade"},
+            bullet_hit: {frames: [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22], rate:1/24, loop:false},
+            bullet_fade: {frames: [2], rate:1, loop:true}
         });
 
 Q.stageScene("level1");
