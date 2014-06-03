@@ -26,8 +26,10 @@
                 type: Q.SPRITE_PLAYER,
                 frame: 34,
                 strength: 100,
+                magicPoints: 100,
                 score: 0,
                 MAX_STRENGTH: 100,
+                MAX_MP: 100,
                 jumpSpeed: -550,
                 speed: 400,
                 hitPoints: 10,
@@ -116,8 +118,10 @@
                 var p = this.p;
                 var playerDir = this.p.facingDir;
                 var newBullet = new Q.Bullet({ 
-                    x: this.c.points[0][0], 
-                    y: this.c.points[0][1],
+                    //x: this.c.points[0][0], 
+                    //y: this.c.points[0][1],
+                    x: this.p.x + playerDir * (this.p.w)/4,
+                    y: this.p.y + (this.p.h)/8,
                     vx: playerDir * 200,
                     vy: 0,
                     intervalTimer: 0,
@@ -249,15 +253,18 @@ Q.Sprite.extend("Bullet", {
             sprite: "explosions",           
             type: Q.SPRITE_BULLET,
             collisionMask: Q.SPRITE_ENEMY,
-            intervalInMS: 1000, //max life of a bullet
+            intervalInMS: 2500, //max life of a bullet
             intervalTimer: 0,
             hitTimer: 0,
             damageVal: 10,
             hasHit: false,
             vx: 500,
             vy: 0,
+            scale: 2/3,
             gravity: 0,
             shot: true,
+            //points: [[-1/2, 0], [-1/2, 1], [1/2, 1], [1/2, 0]],
+            points: [[-3, -3], [-3, 3], [3, 3], [3, -3]],
         });
         this.add("2d, animation");
         this.on("hit.sprite",this,"hitEnemy"); 
@@ -464,6 +471,8 @@ Q.Enemy.extend("Skeleton", {
             damagePoints:30,
             health: 50,
             hasDeadAnim: true,
+            //points: [[-1/2, 0], [-1/2, 1], [1/2, 1], [1/2, 0]],
+            points: [[-9, -24], [-9, 24], [9, 24], [9, -24]],
         });
         //this.size(false);
     }
@@ -507,7 +516,10 @@ Q.scene('hud',function(stage) {
 
   var strength = container.insert(new Q.UI.Text({x:50, y: 20,
     label: "Health: " + stage.options.strength + '%', color: "white" }));
-
+  /*
+  var magicPoints = container.insert(new Q.UI.Text({x: 350, y: 20,
+    label: "Magic: " + stage.options.magic, color: "white"}));
+*/
   container.fit(20);
 });
 // Load assets and launch the first scene to start the game
