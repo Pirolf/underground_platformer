@@ -21,6 +21,8 @@
                 immune: false,
                 BULLET_MIN_INTERVAL: 2000,
                 bulletFiredTimer: 2000,
+                mpRecoverTimer: 0,
+                MP_RECOVER_TIME: 24, //in frames
                 facingDir: 1, //1 for right, -1 for left
                 x: 5,
                 y: 1,
@@ -143,6 +145,17 @@
                     this.p.immune = false;
                     this.animate({"opacity": 1}, 1);
                 }
+            }
+            if(this.p.magicPoints < this.p.MAX_MP){
+                this.p.mpRecoverTimer ++;
+                if(this.p.mpRecoverTimer >= this.p.MP_RECOVER_TIME){
+                    this.p.mpRecoverTimer = 0;
+                    this.p.magicPoints++;
+                    Q.stageScene("hud", 2, this.p);
+                }
+            }else{
+                this.p.mpRecoverTimer = 0;
+                Q.stageScene("hud", 2, this.p);
             }
             if(this.p.onLadder) {
                 this.p.gravity = 0;
