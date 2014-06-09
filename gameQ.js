@@ -11,17 +11,20 @@
     //global vars
     //var isDown = false;
     var facingRight = true;
+    var currTotalWeight = 0;
     //constants
     Q.SPRITE_PLAYER = 1;
     Q.SPRITE_COLLECTABLE = 2;
     Q.SPRITE_ENEMY = 4;
     Q.SPRITE_DOOR = 8;
     Q.SPRITE_BULLET = 16;
-   
 
 
+    Q.collClass = new Array();
+   Q.component("coll", function(){
 
-
+   });
+   //Q.include("coll");
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
@@ -53,10 +56,15 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("potion_red_20_20.png");
     Q.compileSheets("skeleton-36_48.png");
     Q.compileSheets("explosionSheet.png");
+    Q.compileSheets("weapons/shotgun.png");
     //Q.stageScene("level1");
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
-     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "skeleton-36_48.png"], function(){     
+     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", 
+     "skeleton-36_48.png", "weapons/shotgun.png"], function(){     
         var redPotion = new Q.Potion_red();
+        var shotgun = new Q.Shotgun();
+        //Q.collClass.sort();
+        console.log(Q.collClass);
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
             run_left: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: "x", loop: true, next: 'stand_right' },

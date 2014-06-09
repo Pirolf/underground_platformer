@@ -11,7 +11,7 @@
                 score: 0,
                 MAX_STRENGTH: 100,
                 MAX_MP: 100,
-                jumpSpeed: -550,
+                jumpSpeed: -500,
                 speed: 400,
                 hitPoints: 10,
                 onLadder:false,
@@ -24,6 +24,7 @@
                 facingDir: 1, //1 for right, -1 for left
                 x: 5,
                 y: 1,
+                hasWeapon: false,
                 collisionMask: Q.SPRITE_DEFAULT | Q.SPRITE_COLLECTABLE | Q.SPRITE_DOOR 
             });
             this.p.points = this.p.standingPoints;
@@ -157,10 +158,8 @@
                     this.play("climb");
                 } else {
                     this.continueOverSensor();
-                    //this.p.isClimbing = false;
                 }
                 processed = true;
-                //this.p.isClimbing = false;
             }
             //check door 
             if(!processed && this.p.door){

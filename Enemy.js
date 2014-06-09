@@ -1,7 +1,6 @@
 //Enemy class
 Q.Sprite.extend("Enemy", {
     init: function(p, defaults){
-        //this._super(p, {
         this._super(p,Q._defaults(defaults||{},{
             sheet: p.sprite,
             type: Q.SPRITE_ENEMY,
@@ -13,13 +12,43 @@ Q.Sprite.extend("Enemy", {
             hasDeadAnim: false,
             damagePoints: 10,
             damageMp: 0, //damage for magic points
+            dropCollId: -1,
+            death_opacity: 0,
+            dead:false,
             collisionMask: Q.SPRITE_DEFAULT,
+            DEAD_TIME: 2000,
         }));
-        this.add("2d, aiBounce, animation"); 
+        this.add("2d, aiBounce, animation, tween"); 
         this.on("bump.top",this,"die");
         this.on("hit.sprite",this,"hit"); 
-        this.on("bullet.hit", this, "hitByBullet");  
+        this.on("bullet.hit", this, "hitByBullet"); 
+
+       
     },
+    __assignDroppable: function(){
+        if(this.p.dropProccessed){
+            return;
+        }
+        this.p.dropProccessed = true;
+        var inserted = false;
+        var ran = Math.floor(Math.random() * currTotalWeight);
+        console.log("ran :" +ran);
+        for(var key in Q.collClass){
+            currClassName = (Q.collClass)[key]["name"];
+            console.log("bla: " + currClassName);
+            lo = (Q.collClass)[key]["range"][0];
+            hi = (Q.collClass)[key]["range"][1];
+            if(lo <= ran && ran < hi){
+                this.p.dropObj = currClassName;
+                if(!inserted){
+                    inserted = true;
+                    console.log("inserted");
+                }
+                return;
+            }
+        }
+    },
+   
     __getDirection: function(){
         if(this.p.vx < 0){
             return "left";
@@ -29,7 +58,7 @@ Q.Sprite.extend("Enemy", {
     },
     hit: function(col) {
         if(col.obj.isA("Player") && !col.obj.p.immune && !this.p.dead) {
-            col.obj.trigger('enemy.hit', {"enemy":this,"col":col});
+            col.obj.trigger('enemy.hit', {"enemy":this,"colObj":col.obj});
            // console.log(col.obj.p.cx +", " + this.p.cx);
         }
         return;
@@ -41,29 +70,58 @@ Q.Sprite.extend("Enemy", {
         }
         console.log(this.p.health);
         if (this.p.health <= 0) {
+            /*
             var dir = this.__getDirection();
-            console.log(dir);
             if(this.p.hasDeadAnim){
                this.play('enemy_dead_' + dir); 
             }
-            this.destroy();
+            */
+            this.die(bullet);
+            //this.destroy();
         }
         //this.destroy(); 
     },
     die: function(col) {
-        if(col.obj.isA("Player")) {
+        if(col.className && col.isA("Bullet")){
             this.p.vx=this.p.vy=0;
-            //TODO: enemy dead anim
-
             this.p.dead = true;
-            var that = this;
+            this.p.deadTimer = 0;
+            this.__assignDroppable();
+
+        } else if(col.obj.isA("Player")) {
+            this.p.vx=this.p.vy=0;
+            this.p.dead = true;
             col.obj.p.vy = -300;
             this.p.deadTimer = 0;
+            this.__assignDroppable();
         }
     },
     step: function(dt) {   
+        if((!this.p.itemDropped) && this.p.dropObj){
+            this.p.itemDropped = true;
+            this.p.attachedDroppable = new Q[currClassName]({         
+                x: this.p.x,
+                y: Q('Player').first().p.y- 64,
+                spawnTimer:  0,
+                inserting: true, 
+            });
+        }else if(this.p.itemDropped && (!this.p.dropping)){
+            var ad = this.p.attachedDroppable;
+            console.log(ad.className);
+            ad.p.spawnTimer ++;
+            if(ad.p.spawnTimer < this.p.DEAD_TIME *48/1000){
+                console.log("st: " + ad.p.spawnTimer +
+                    " MAX: " + ad.p.SPAWN_TIME *48/1000.0 );             
+            }else{
+               // ad.on("sensor");
+               this.p.dropping = true;
+               Q.stage().insert(ad);
+               console.log("insert!");
+            }    
+        }
+        
         //tile boundary detection
-        if(this.p.x - (this.p.w)/2< (this.p.leftBound) * 64){
+        if(this.p.x - (this.p.w)/2 < (this.p.leftBound) * 64){
            this.p.x = (this.p.leftBound) * 64 + (this.p.w)/2;
            this.p.vx = -this.p.vx;
            this.play("enemy_walk_right");
@@ -73,11 +131,18 @@ Q.Sprite.extend("Enemy", {
             this.play("enemy_walk_left");
         }else if(this.p.dead) {
             this.del('2d, aiBounce');
+            var dir = this.__getDirection();
             this.p.deadTimer++;
-            if (this.p.deadTimer > 24) {
-            // Dead for 24 frames, remove it.
-                this.destroy();
+            if(this.p.hasDeadAnim){
+               this.play('enemy_dead_' + dir); 
+            }else{
+                if (this.p.deadTimer > this.p.DEAD_TIME * 48/1000) {
+                    this.destroy();
+                }else{
+                  this.animate({"opacity": this.p.death_opacity}, 0);  
+                }        
             }
+            
             return;
         }else if(this.p.vx < 0){
           this.play('enemy_walk_left');  
