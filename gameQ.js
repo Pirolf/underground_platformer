@@ -24,7 +24,6 @@
    Q.component("coll", function(){
 
    });
-   //Q.include("coll");
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
@@ -95,8 +94,8 @@ Q.loadTMX("underground.tmx", function(){
         Q.animations("skeleton_36_48",{
             enemy_walk_left: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:"x", rate:1/12, loop:true},
             enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true},
-            enemy_dead_left: {frames:[15,16,17,18,19], flip:"x", rate: 1/5, loop:false},
-            enemy_dead_right:{frames:[15,16,17,18,19], flip:false, rate:1/5, loop:false},
+            enemy_dead_left: {frames:[15,16,17,18,19], flip:"x", rate: 1, loop:false},
+            enemy_dead_right:{frames:[15,16,17,18,19], flip:false, rate:1, loop:false},
         });
         Q.animations("explosions", {
             bullet_shoot: {frames:[7,6,5,4,3,2,2,2,2,2,2,2,2,2,2,2], rate:1/5, loop:false, next:"bullet_fade"},

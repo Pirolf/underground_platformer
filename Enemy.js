@@ -113,7 +113,6 @@ Q.Sprite.extend("Enemy", {
                 console.log("st: " + ad.p.spawnTimer +
                     " MAX: " + ad.p.SPAWN_TIME *48/1000.0 );             
             }else{
-               // ad.on("sensor");
                this.p.dropping = true;
                Q.stage().insert(ad);
                console.log("insert!");
@@ -135,14 +134,16 @@ Q.Sprite.extend("Enemy", {
             this.p.deadTimer++;
             if(this.p.hasDeadAnim){
                this.play('enemy_dead_' + dir); 
+               if (this.p.deadTimer > this.p.DEAD_TIME * 48/1000){
+                    this.destroy();
+                }
             }else{
                 if (this.p.deadTimer > this.p.DEAD_TIME * 48/1000) {
                     this.destroy();
                 }else{
                   this.animate({"opacity": this.p.death_opacity}, 0);  
                 }        
-            }
-            
+            }     
             return;
         }else if(this.p.vx < 0){
           this.play('enemy_walk_left');  
