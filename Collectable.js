@@ -12,6 +12,7 @@ Q.Sprite.extend("Collectable", {
             gravity: 0.3,
             weight: 10,
             SPAWN_TIME: 2000,
+            flip: ""
         }));
         this.add("animation, 2d, coll");
         this.on("sensor");
@@ -32,22 +33,64 @@ Q.Sprite.extend("Collectable", {
     }
 });
 //Weapons
-
-Q.Collectable.extend("Shotgun", {
+Q.Collectable.extend("Weapon", {
     init: function(p){
         this._super(p, {
-            asset: "/weapons/shotgun.png",
-            weight: 5,
+            asset: "shotgun.png",
+            weight: 35,
+            type: Q.SPRITE_WEAPON,
+            //gravity:0,
+            x: 0,
+            y: 0,
+            relaXRight: 15, //relative x to player when facing right
+            relaXLeft: -15,
+            scale:0.3
         });
     },
     sensor: function(colObj){
         console.log("shotgun sensor called");
+        sameWeapon = false;
+        if(this === colObj.p.weapon){
+            sameWeapon = true;
+        }
         if(colObj.isA("Player")){
+            if(colObj.p.hasWeapon && colObj.p.weapon && this !== colObj.p.weapon){
+                console.log("remove weapon: " + colObj.p.weapon.className);
+                console.log("before remove " + colObj.children.length);
+                Q.stage().forceRemove(colObj.p.weapon);
+                
+                colObj.p.weapon.destroy();
+                colObj.p.weapon = null;
+                console.log(colObj.children.length);
+            }
+            
+            if(colObj.p.facingDir === 1){
+                this.set({x: this.p.relaXRight, y: 0, gravity:0});
+                if(this.p.flip === "x"){
+                    this.p.flip = "";
+                }
+            }else{
+                this.set({x: this.p.relaXLeft, y: 0, gravity:0});
+                if(this.p.flip === ""){
+                    this.p.flip = "x";
+                }
+            }
+
             colObj.p.hasWeapon = true;
+            colObj.p.weapon = this;
+            if(!sameWeapon){
+                Q.stage().insert(this, colObj);
+            }         
         }
     },
 });
+Q.Weapon.extend("Shotgun", {
+    init: function(p){
+        this._super(p, {
 
+        });
+    }
+})
 
 //Potions
 Q.Collectable.extend("Potion_red", {

@@ -113,6 +113,14 @@
  <tileset firstgid="149" name="explosions" tilewidth="45" tileheight="45">
   <image source="../images/explosionSheet.png" width="225" height="225"/>
  </tileset>
+ <tileset firstgid="174" name="shotgun" tilewidth="66" tileheight="48">
+  <image source="../images/shotgun.png" width="66" height="48"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="Shotgun"/>
+   </properties>
+  </tile>
+ </tileset>
  <layer name="wall" width="300" height="100">
   <properties>
    <property name="collision" value="true"/>

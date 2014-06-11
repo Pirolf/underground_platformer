@@ -27,6 +27,7 @@
                 x: 5,
                 y: 1,
                 hasWeapon: false,
+                weapon: null,
                 collisionMask: Q.SPRITE_DEFAULT | Q.SPRITE_COLLECTABLE | Q.SPRITE_DOOR 
             });
             this.p.points = this.p.standingPoints;
@@ -100,17 +101,13 @@
             console.log(this.p.magicPoints);
             this.p.immuneTimer = 0;
             this.p.immuneOpacity = 1;
-            if (this.p.strength == 0) {
-                this.resetLevel();
-            }        
+                   
         },
         fireBullet: function(){
             if(this.__canFire() && this.p.bulletFiredTimer >= this.p.BULLET_MIN_INTERVAL * 12/1000.0){  
                 var p = this.p;
                 var playerDir = this.p.facingDir;
                 var newBullet = new Q.Bullet({ 
-                    //x: this.c.points[0][0], 
-                    //y: this.c.points[0][1],
                     x: this.p.x + playerDir * (this.p.w)/4,
                     y: this.p.y + (this.p.h)/8,
                     vx: playerDir * 200,
@@ -128,11 +125,31 @@
 
         step: function(delta){
             var processed = false;
+            if (this.p.strength <= 0) {
+                this.resetLevel();
+            } 
             this.p.bulletFiredTimer++;
-             
+            
             //check left boundary
             if(this.p.x < 16){
                 this.p.x = 16;
+            }
+            
+            if(this.p.hasWeapon){
+                weapon = this.p.weapon;
+                console.log("p.facingDir : " + this.p.facingDir);
+                if(this.p.facingDir === 1){
+                   //weapon.p.x = 15; 
+                   if(weapon.p.flip === "x"){
+                        weapon.p.flip = "";
+                   }
+                }else{
+                   //weapon.p.x = -15;
+                   if(weapon.p.flip = ""){
+                        weapon.p.flip = "x";
+                   } 
+                }
+              // weapon.p.y = 0;
             }
             //prevent continuous hitting           
             if (this.p.immune) {               
@@ -191,7 +208,7 @@
                     this.p.x = this.p.toDoor.p.x;
                     this.stage.centerOn(this.p.x, this.p.y);
                     this.p.toDoor = false;
-                    this.stage.follow(this);
+                    
                     processed = true;
                 }
             }//end of door checking
@@ -208,10 +225,16 @@
                 if(this.p.landed > 0) { this.play("run_left");}
                 else{this.play("jump_left");}
             }else if(this.p.vx == 0 && this.p.landed <= 0){
-                if(facingRight){
-                    this.play("jump_up_facingRight");
+                if(this.p.landed <= 0){     
+                    if(facingRight){
+                        this.p.facingDir = 1;
+                        this.play("jump_up_facingRight");
+                    }else{
+                        this.p.facingDir = -1;
+                        this.play("jump_up_faingLeft");
+                    }
                 }else{
-                    this.play("jump_up_faingLeft");
+                    this.p.facingDir = 1;
                 }
             }else if(Q.inputs['goDown'] && !this.p.onLadder){
                 if(this.p.isCrouching){

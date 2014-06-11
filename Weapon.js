@@ -21,7 +21,6 @@ Q.Sprite.extend("Bullet", {
         });
         this.add("2d, animation");
         this.on("hit.sprite",this,"hitEnemy"); 
-        this.on("hit.tile", this, "hitEnemy");
     },
     hitEnemy: function(col){
         var colObj = col.obj;

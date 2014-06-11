@@ -32,17 +32,16 @@ Q.Sprite.extend("Enemy", {
         this.p.dropProccessed = true;
         var inserted = false;
         var ran = Math.floor(Math.random() * currTotalWeight);
-        console.log("ran :" +ran);
+        console.log("ran :" + ran);
         for(var key in Q.collClass){
             currClassName = (Q.collClass)[key]["name"];
-            console.log("bla: " + currClassName);
             lo = (Q.collClass)[key]["range"][0];
             hi = (Q.collClass)[key]["range"][1];
+            console.log("lo: "+lo + ", hi: " + hi);
             if(lo <= ran && ran < hi){
                 this.p.dropObj = currClassName;
                 if(!inserted){
                     inserted = true;
-                    console.log("inserted");
                 }
                 return;
             }
@@ -110,12 +109,18 @@ Q.Sprite.extend("Enemy", {
             console.log(ad.className);
             ad.p.spawnTimer ++;
             if(ad.p.spawnTimer < this.p.DEAD_TIME *48/1000){
-                console.log("st: " + ad.p.spawnTimer +
-                    " MAX: " + ad.p.SPAWN_TIME *48/1000.0 );             
+               // console.log("st: " + ad.p.spawnTimer +
+               //     " MAX: " + ad.p.SPAWN_TIME *48/1000.0 );             
             }else{
                this.p.dropping = true;
-               Q.stage().insert(ad);
-               console.log("insert!");
+               if(ad.p.type === Q.SPRITE_WEAPON){
+                   // ad.set({gravity:0, scale: 0.3, x:20, y:0});
+                    //Q.stage().insert(ad, Q("Player").first());
+                    player = Q("Player").first();
+                    Q.stage().insert(ad);
+               }else{
+                    Q.stage().insert(ad);
+               }
             }    
         }
         

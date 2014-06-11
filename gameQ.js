@@ -12,13 +12,15 @@
     //var isDown = false;
     var facingRight = true;
     var currTotalWeight = 0;
+    var vp; //viewport
+    var boundingBox = {minX:16, minY:0};
     //constants
     Q.SPRITE_PLAYER = 1;
     Q.SPRITE_COLLECTABLE = 2;
     Q.SPRITE_ENEMY = 4;
     Q.SPRITE_DOOR = 8;
     Q.SPRITE_BULLET = 16;
-
+    Q.SPRITE_WEAPON = 32;
 
     Q.collClass = new Array();
    Q.component("coll", function(){
@@ -28,8 +30,9 @@
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
     //var player = Q("Player").first({vx:0,vy:0});
-    var blue_ghost = Q("Enemy").first();
-    stage.add("viewport").follow(Q("Player").first());
+
+    vp = stage.add("viewport");
+    vp.follow(Q("Player").first(), {x: true, y:true}, boundingBox);
 });
 Q.scene('hud',function(stage) {
   var container = stage.insert(new Q.UI.Container({
@@ -56,13 +59,12 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("skeleton-36_48.png");
     Q.compileSheets("explosionSheet.png");
     Q.compileSheets("weapons/shotgun.png");
-    //Q.stageScene("level1");
+    
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
      "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", 
-     "skeleton-36_48.png", "weapons/shotgun.png"], function(){     
+     "skeleton-36_48.png", "shotgun.png"], function(){     
         var redPotion = new Q.Potion_red();
         var shotgun = new Q.Shotgun();
-        //Q.collClass.sort();
         console.log(Q.collClass);
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },
