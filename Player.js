@@ -98,7 +98,7 @@
             Q.stageScene('hud', 2, this.p);
 
             //console.log(this.p.strength);  
-            console.log(this.p.magicPoints);
+            //console.log(this.p.magicPoints);
             this.p.immuneTimer = 0;
             this.p.immuneOpacity = 1;
                    
@@ -137,7 +137,7 @@
             
             if(this.p.hasWeapon){
                 weapon = this.p.weapon;
-                console.log("p.facingDir : " + this.p.facingDir);
+               // console.log("p.facingDir : " + this.p.facingDir);
                 if(this.p.facingDir === 1){
                    //weapon.p.x = 15; 
                    if(weapon.p.flip === "x"){

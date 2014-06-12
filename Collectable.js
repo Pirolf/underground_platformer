@@ -12,7 +12,13 @@ Q.Sprite.extend("Collectable", {
             gravity: 0.3,
             weight: 10,
             SPAWN_TIME: 2000,
-            flip: ""
+            flip: "",
+            //add-on effects
+            offset_fireDamage: 0,
+            offset_MPRecoverTime: 0,
+            offset_bulletMinInterval: 0,
+            deltaStrength: 0,
+            effectiveTime: null, //by default null, numeric only for non instants
         }));
         this.add("animation, 2d, coll");
         this.on("sensor");
@@ -22,8 +28,7 @@ Q.Sprite.extend("Collectable", {
             "name": this.className,
             "range": [currTotalWeight, currTotalWeight + this.p.weight]
             };
-          currTotalWeight += this.p.weight;
-          //console.log(Q.collClass);  
+          currTotalWeight += this.p.weight; 
         }       
     }, //init
     // When a Collectable is hit.
@@ -44,11 +49,20 @@ Q.Collectable.extend("Weapon", {
             y: 0,
             relaXRight: 15, //relative x to player when facing right
             relaXLeft: -15,
-            scale:0.3
+            scale:0.3,
+            //weapon only fields:
+            onPlayerTimer: 0, //keeps track of the time the weapon is carried by player
+            pickeUp: false,
+            //add-on effects: defaults for weapons
+            offset_fireDamage: 0,
+            offset_MPRecoverTime: 0,
+            offset_bulletMinInterval: 0,
+            deltaStrength: 0,
+            effectiveTime: 180, // in seconds
         });
     },
     sensor: function(colObj){
-        console.log("shotgun sensor called");
+        //console.log("shotgun sensor called");
         sameWeapon = false;
         if(this === colObj.p.weapon){
             sameWeapon = true;
@@ -80,16 +94,42 @@ Q.Collectable.extend("Weapon", {
             colObj.p.weapon = this;
             if(!sameWeapon){
                 Q.stage().insert(this, colObj);
+                this.p.onPlayerTimer = 0;
+                this.p.pickedUp = true;
             }         
         }
+    }, //end of sensor
+    step: function(delta){
+        if(this.p.pickedUp){
+            if(this.p.onPlayerTimer < this.p.effectiveTime){
+                this.p.onPlayerTimer++;
+               // console.log("onPlayerTimer: " + this.p.onPlayerTimer);  
+            }else{
+              //effective time passed, remove weapon and destroy
+                player = Q("Player").first();
+                Q.stage().forceRemove(player.p.weapon);  
+                this.destroy();
+                player.p.weapon = null;  
+                console.log(this.className + " effective time passed, weapon removed");    
+            }                  
+        }
     },
+
 });
 Q.Weapon.extend("Shotgun", {
     init: function(p){
         this._super(p, {
-
         });
-    }
+        var overrideEffects = {
+            offset_fireDamage: 5,
+            offset_MPRecoverTime: 0,
+            offset_bulletMinInterval: 0,
+            deltaStrength: 0,
+            effectiveTime: 360, //in seconds
+        }
+        this.set(overrideEffects);
+        //this.p.effectiveTime = 360;
+    },
 })
 
 //Potions

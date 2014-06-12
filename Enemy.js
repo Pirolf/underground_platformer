@@ -17,6 +17,7 @@ Q.Sprite.extend("Enemy", {
             dead:false,
             collisionMask: Q.SPRITE_DEFAULT,
             DEAD_TIME: 2000,
+            health: 20
         }));
         this.add("2d, aiBounce, animation, tween"); 
         this.on("bump.top",this,"die");
@@ -64,21 +65,17 @@ Q.Sprite.extend("Enemy", {
     },
     hitByBullet: function(data){        
         var bullet = data.bulletObj;
+        var player = Q("Player").first();
         if(this.p.health > 0){
             this.p.health -= bullet.p.damageVal;
-        }
-        console.log(this.p.health);
-        if (this.p.health <= 0) {
-            /*
-            var dir = this.__getDirection();
-            if(this.p.hasDeadAnim){
-               this.play('enemy_dead_' + dir); 
+            if(player.p.weapon){
+                this.p.health -= (player.p.weapon).p.offset_fireDamage;
             }
-            */
-            this.die(bullet);
-            //this.destroy();
+            console.log("enemy health: " + this.p.health);
         }
-        //this.destroy(); 
+        if (this.p.health <= 0) {
+            this.die(bullet);
+        }
     },
     die: function(col) {
         if(col.className && col.isA("Bullet")){
@@ -106,7 +103,7 @@ Q.Sprite.extend("Enemy", {
             });
         }else if(this.p.itemDropped && (!this.p.dropping)){
             var ad = this.p.attachedDroppable;
-            console.log(ad.className);
+            //console.log(ad.className);
             ad.p.spawnTimer ++;
             if(ad.p.spawnTimer < this.p.DEAD_TIME *48/1000){
                // console.log("st: " + ad.p.spawnTimer +
@@ -164,6 +161,7 @@ Q.Enemy.extend("Ghost", {
             sheet: "ghost_25_35",
             sprite: "ghost_25_35",
             damageMp: 10,
+            health: 20
         });
     }
 });
