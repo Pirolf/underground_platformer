@@ -134,24 +134,22 @@
             if(this.p.x < 16){
                 this.p.x = 16;
             }
+            if(this.p.y <= 0){
+                this.p.y = 0;
+            }
             
             if(this.p.hasWeapon && this.p.weapon){
                 weapon = this.p.weapon;
                // console.log("p.facingDir : " + this.p.facingDir);
                 if(this.p.facingDir === 1){
-                   //weapon.p.x = 15; 
                    if(weapon.p.flip === "x"){
-                        //weapon.p.flip = "";
                         weapon.set("flip", "");
                    }
                 }else{
-                   //weapon.p.x = -15;
                    if(weapon.p.flip === ""){
-                       // weapon.p.flip = "x";
                        weapon.set("flip", "x");
                    } 
                 }
-              // weapon.p.y = 0;
             }
             //prevent continuous hitting           
             if (this.p.immune) {               

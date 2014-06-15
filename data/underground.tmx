@@ -60274,17 +60274,8 @@
   </data>
  </layer>
  <objectgroup name="Door" width="300" height="100">
-  <object gid="12" x="640" y="256">
-   <properties>
-    <property name="doorId" value="0"/>
-   </properties>
-  </object>
+  <object gid="12" x="640" y="256"/>
   <object gid="12" x="1152" y="384"/>
-  <object gid="12" x="1152" y="384">
-   <properties>
-    <property name="doorId" value="1"/>
-   </properties>
-  </object>
   <object gid="12" x="1600" y="832"/>
  </objectgroup>
  <objectgroup name="player" width="300" height="100">

@@ -18,12 +18,18 @@ Q.Sprite.extend("Door", {
   findRandomDoor: function() {
     //return this.stage.find(this.p.link);
     var results = Q("Door");
-    var randomDoorIndex = Math.floor(Math.random() * results.length);
-    //while(randomDoorIndex === this.p.doorId){
-    while(results.at(randomDoorIndex) === this){
+    
+    var sameDoor = true;
+    var currDoor;
+    while(sameDoor){
         randomDoorIndex = Math.floor(Math.random() * results.length);
+        console.log("total doors: " + results.length + ", doorIndex: " + randomDoorIndex);
+        currDoor = results.at(randomDoorIndex);
+        if(currDoor !== this){
+          return currDoor;
+        }
     }
-    return results.at(randomDoorIndex);
+   // return results.at(randomDoorIndex);
   },
   // When the player is in the door.
   sensor: function(colObj) {
