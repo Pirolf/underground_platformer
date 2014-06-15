@@ -38,7 +38,7 @@ Q.Sprite.extend("Enemy", {
             currClassName = (Q.collClass)[key]["name"];
             lo = (Q.collClass)[key]["range"][0];
             hi = (Q.collClass)[key]["range"][1];
-            console.log("lo: "+lo + ", hi: " + hi);
+            console.log(currClassName + ": lo: "+lo + ", hi: " + hi);
             if(lo <= ran && ran < hi){
                 this.p.dropObj = currClassName;
                 if(!inserted){

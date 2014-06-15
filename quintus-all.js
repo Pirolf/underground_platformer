@@ -164,7 +164,8 @@ var Quintus = function Quintus(opts) {
   };
 
    /**
-    Method that adds default properties onto an object only if the key on dest is undefined
+    Method that adds default properties onto an object 
+    only if the key on dest is undefined
 
    @method Q._defaults
    @param {Object} dest - destination object

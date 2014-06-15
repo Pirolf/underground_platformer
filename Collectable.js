@@ -22,27 +22,33 @@ Q.Sprite.extend("Collectable", {
         }));
         this.add("animation, 2d, coll");
         this.on("sensor");
-
-        if(!(Q.collClass)[this.className]){
-          Q.collClass[this.className] =  {
-            "name": this.className,
-            "range": [currTotalWeight, currTotalWeight + this.p.weight]
-            };
-          currTotalWeight += this.p.weight; 
-        }       
+        var selfThis = this;
+        this.pushToQClassList(selfThis);
+        
+        
     }, //init
+    pushToQClassList: function(selfThis){
+        if(!(Q.collClass)[selfThis.className]){
+          Q.collClass[selfThis.className] =  {
+            "name": selfThis.className,
+            "range": [currTotalWeight, currTotalWeight + selfThis.p.weight]
+            };
+          currTotalWeight += selfThis.p.weight; 
+        }       
+    },
     // When a Collectable is hit.
     sensor: function(colObj) {
         //return;
         Q.stageScene("hud", 2, colObj.p);
     }
 });
+
 //Weapons
 Q.Collectable.extend("Weapon", {
-    init: function(p){
-        this._super(p, {
+    init: function(p, defaults){
+        this._super(p, Q._defaults(defaults || {}, {
             asset: "shotgun.png",
-            weight: 35,
+             weight: 15,
             type: Q.SPRITE_WEAPON,
             //gravity:0,
             x: 0,
@@ -50,6 +56,7 @@ Q.Collectable.extend("Weapon", {
             relaXRight: 15, //relative x to player when facing right
             relaXLeft: -15,
             scale:0.3,
+            flip: "",
             //weapon only fields:
             onPlayerTimer: 0, //keeps track of the time the weapon is carried by player
             pickeUp: false,
@@ -59,7 +66,7 @@ Q.Collectable.extend("Weapon", {
             offset_bulletMinInterval: 0,
             deltaStrength: 0,
             effectiveTime: 180, // in seconds
-        });
+        }));
     },
     sensor: function(colObj){
         //console.log("shotgun sensor called");
@@ -71,9 +78,10 @@ Q.Collectable.extend("Weapon", {
             if(colObj.p.hasWeapon && colObj.p.weapon && this !== colObj.p.weapon){
                 console.log("remove weapon: " + colObj.p.weapon.className);
                 console.log("before remove " + colObj.children.length);
+                //colObj.p.weapon.destroy();
                 Q.stage().forceRemove(colObj.p.weapon);
                 
-                colObj.p.weapon.destroy();
+                
                 colObj.p.weapon = null;
                 console.log(colObj.children.length);
             }
@@ -107,28 +115,48 @@ Q.Collectable.extend("Weapon", {
             }else{
               //effective time passed, remove weapon and destroy
                 player = Q("Player").first();
-                Q.stage().forceRemove(player.p.weapon);  
+                player.p.hasWeapon = false;
                 this.destroy();
-                player.p.weapon = null;  
-                console.log(this.className + " effective time passed, weapon removed");    
+               // Q.stage().forceRemove(this); 
+                console.log(this.className + " effective time passed, weapon removed");   
+                
+                //player.p.weapon = null;  
+                
+                  
             }                  
         }
     },
 
 });
 Q.Weapon.extend("Shotgun", {
-    init: function(p){
-        this._super(p, {
-        });
-        var overrideEffects = {
+    init: function(p, defaults){
+        this._super(p, Q._defaults(defaults||{},{
+            asset: "shotgun.png",
+            weight: 35,
             offset_fireDamage: 5,
             offset_MPRecoverTime: 0,
             offset_bulletMinInterval: 0,
             deltaStrength: 0,
+            effectiveTime: 360, //in seconds  
+        }));
+        console.log(this.className + ": " + this.p.weight);
+    },
+})
+Q.Weapon.extend("MediumGun", {
+    init: function(p){
+        this._super(p, {
+            asset: "mediumGun.png",
+            scale: 0.2,
+            weight: 25,
+            offset_fireDamage: 10,
+            offset_MPRecoverTime: 0,
+            offset_bulletMinInterval: 0,
+            deltaStrength: 0,
             effectiveTime: 360, //in seconds
-        }
-        this.set(overrideEffects);
-        //this.p.effectiveTime = 360;
+        });
+        console.log(this.className + ": " + Object.keys(this.p));
+        console.log("weight: " + this.p.weight);
+        
     },
 })
 
