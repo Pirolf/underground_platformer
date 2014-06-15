@@ -56,14 +56,16 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("ghost_25_35.png");
     Q.compileSheets("ghost_red_25_35.png");
     Q.compileSheets("potion_red_20_20.png");
+    Q.compileSheets("potion_blue_20_20.png");
     Q.compileSheets("skeleton-36_48.png");
     Q.compileSheets("explosionSheet.png");
     Q.compileSheets("shotgun.png");
     Q.compileSheets("mediumGun.png");
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
-     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", 
+     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
      "skeleton-36_48.png", "shotgun.png", "mediumGun.png"], function(){     
         var redPotion = new Q.Potion_red();
+        var bluePotion = new Q.Potion_blue();
         var shotgun = new Q.Shotgun();
         var mediumGun = new Q.MediumGun();
         

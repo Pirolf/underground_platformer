@@ -38,8 +38,20 @@ Q.Sprite.extend("Collectable", {
     },
     // When a Collectable is hit.
     sensor: function(colObj) {
-        //return;
-        Q.stageScene("hud", 2, colObj.p);
+        /*
+         console.log(this.className + " sensor called");
+        if(colObj.isA("Player")){
+            if(colObj.p.strength <= colObj.p.MAX_STRENGTH - this.p.deltaStrength){
+                colObj.p.strength += this.p.deltaStrength;
+                Q.stageScene('hud', 2, colObj.p);
+
+            }
+           // colObj.play("stand_front");  
+            this.destroy();
+        }
+        return;
+        */
+       // Q.stageScene("hud", 2, colObj.p);
     }
 });
 
@@ -118,11 +130,7 @@ Q.Collectable.extend("Weapon", {
                 player.p.hasWeapon = false;
                 this.destroy();
                // Q.stage().forceRemove(this); 
-                console.log(this.className + " effective time passed, weapon removed");   
-                
-                //player.p.weapon = null;  
-                
-                  
+                console.log(this.className + " effective time passed, weapon removed");               
             }                  
         }
     },
@@ -154,33 +162,61 @@ Q.Weapon.extend("MediumGun", {
             deltaStrength: 0,
             effectiveTime: 360, //in seconds
         });
-        console.log(this.className + ": " + Object.keys(this.p));
-        console.log("weight: " + this.p.weight);
+       // console.log(this.className + ": " + Object.keys(this.p));
+       // console.log("weight: " + this.p.weight);
         
     },
-})
-
-//Potions
-Q.Collectable.extend("Potion_red", {
-    init: function(p){
-        this._super(p, {
-            asset: "potion_red_20_20.png",
-            weight: 15,
-            //sprite:"potion_red_12_12",
-            deltaStrength: 5,
-        });
+}); 
+Q.Collectable.extend("InstantColl", {
+    init: function(p, defaults){
+        this._super(p, Q._defaults(defaults || {}, {
+            sensorCalled: false,
+            deltaStrength: 0,
+            deltaMP: 0,
+        }));
     },
     sensor: function(colObj){
-        console.log("red potion sensor called");
+        if(this.p.sensorCalled){
+            return;
+        }
+        this.p.sensorCalled = true;
+        console.log(this.className + " sensor called");
         if(colObj.isA("Player")){
-            if(colObj.p.strength <= colObj.p.MAX_STRENGTH - this.p.deltaStrength){
+            if(colObj.p.strength + this.p.deltaStrength <= colObj.p.MAX_STRENGTH 
+                && colObj.p.strength + this.p.deltaStrength >= 0){
                 colObj.p.strength += this.p.deltaStrength;
                 Q.stageScene('hud', 2, colObj.p);
-
             }
-           // colObj.play("stand_front");  
+            if(colObj.p.magicPoints + this.p.deltaMP <= colObj.p.MAX_MP 
+                && colObj.p.magicPoints + this.p.deltaMP >= 0){
+                colObj.p.magicPoints += this.p.deltaMP;
+            }
             this.destroy();
         }
         return;
     }
+});
+Q.InstantColl.extend("Potion_blue", {
+    init: function(p, defaults){
+        this._super(p, Q._defaults(defaults || {}, {
+            asset: "potion_blue_20_20.png",
+            weight:30,
+            deltaStrength: 10,
+            deltaMP: 10,
+        }));
+    }
+});
+//Potions
+Q.InstantColl.extend("Potion_red", {
+    init: function(p, defaults){
+        this._super(p, Q._defaults(defaults || {}, {
+            asset: "potion_red_20_20.png",
+            weight: 15,
+            //sprite:"potion_red_12_12",
+            deltaStrength: 5,
+        }));
+    },
+    
+    
+    
 });
