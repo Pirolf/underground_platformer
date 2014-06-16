@@ -61,14 +61,21 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("explosionSheet.png");
     Q.compileSheets("shotgun.png");
     Q.compileSheets("mediumGun.png");
+    Q.compileSheets("longScifiGun.png");
+    Q.compileSheets("buster.png");
+    Q.compileSheets("robotCar.png");
+    Q.compileSheets("bat.png");
+
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
      "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
-     "skeleton-36_48.png", "shotgun.png", "mediumGun.png"], function(){     
+     "skeleton-36_48.png", "robotCar.png", "shotgun.png", "mediumGun.png", "longScifiGun.png",
+      "buster.png", "bat.png"], function(){     
         var redPotion = new Q.Potion_red();
         var bluePotion = new Q.Potion_blue();
         var shotgun = new Q.Shotgun();
         var mediumGun = new Q.MediumGun();
-        
+        var longGun = new Q.LongGun();
+        var busterGun = new Q.BusterGun();
         console.log(Q.collClass);
         Q.animations("platformer_sprites0", {
             run_right: { frames: [4, 5, 6, 7, 8, 9, 10, 11], rate: 1/8, flip: false, loop: true, next: 'stand_right' },

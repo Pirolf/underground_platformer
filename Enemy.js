@@ -103,16 +103,11 @@ Q.Sprite.extend("Enemy", {
             });
         }else if(this.p.itemDropped && (!this.p.dropping)){
             var ad = this.p.attachedDroppable;
-            //console.log(ad.className);
             ad.p.spawnTimer ++;
-            if(ad.p.spawnTimer < this.p.DEAD_TIME *48/1000){
-               // console.log("st: " + ad.p.spawnTimer +
-               //     " MAX: " + ad.p.SPAWN_TIME *48/1000.0 );             
+            if(ad.p.spawnTimer < this.p.DEAD_TIME *48/1000){           
             }else{
                this.p.dropping = true;
                if(ad.p.type === Q.SPRITE_WEAPON){
-                   // ad.set({gravity:0, scale: 0.3, x:20, y:0});
-                    //Q.stage().insert(ad, Q("Player").first());
                     player = Q("Player").first();
                     Q.stage().insert(ad);
                }else{
@@ -125,11 +120,15 @@ Q.Sprite.extend("Enemy", {
         if(this.p.x - (this.p.w)/2 < (this.p.leftBound) * 64){
            this.p.x = (this.p.leftBound) * 64 + (this.p.w)/2;
            this.p.vx = -this.p.vx;
-           this.play("enemy_walk_right");
+           if(!this.p.asset) {
+                this.play("enemy_walk_right");
+            }
         }else if(this.p.x + (this.p.w)/2 > (this.p.rightBound + 1) * 64){
             this.p.x = (this.p.rightBound + 1) * 64 - (this.p.w)/2;
             this.p.vx = -this.p.vx;
-            this.play("enemy_walk_left");
+            if(!this.p.asset) {
+                this.play("enemy_walk_left");
+            }
         }else if(this.p.dead) {
             this.del('2d, aiBounce');
             var dir = this.__getDirection();
@@ -148,9 +147,17 @@ Q.Sprite.extend("Enemy", {
             }     
             return;
         }else if(this.p.vx < 0){
-          this.play('enemy_walk_left');  
+          if(!this.p.asset){
+            this.play('enemy_walk_left');  
+          }else{
+            if(this.p.flip === "") this.p.flip = "x";
+          }
         }else{
-          this.play("enemy_walk_right");
+          if(!this.p.asset){
+            this.play("enemy_walk_right");
+          }else{
+            if(this.p.flip === "x") this.p.flip = "";
+          }
         }
         
     },
@@ -170,6 +177,26 @@ Q.Enemy.extend("Ghost_red", {
         this._super(p, {       
             sheet: "ghost_red_25_35",
             sprite: "ghost_red_25_35",
+        });
+    }
+});
+Q.Enemy.extend("RobotCar", {
+    init: function(p){
+        this._super(p, {
+            asset: "robotCar.png",
+            flip: "x",
+            vx: 100,
+            points: [[-22, -24], [-22, 24], [22, 24], [22, -24]],
+        });
+    }
+});
+Q.Enemy.extend("Bat", {
+    init: function(p){
+        this._super(p, {
+            asset: "bat.png",
+            flip: "x",
+            vx: 200,
+            gravity: 0,
         });
     }
 });

@@ -161,12 +161,38 @@ Q.Weapon.extend("MediumGun", {
             offset_bulletMinInterval: 0,
             deltaStrength: 0,
             effectiveTime: 360, //in seconds
-        });
-       // console.log(this.className + ": " + Object.keys(this.p));
-       // console.log("weight: " + this.p.weight);
-        
+        });  
     },
 }); 
+Q.Weapon.extend("LongGun", {
+    init: function(p){
+        this._super(p, {
+            asset: "longScifiGun.png",
+            scale: 0.2,
+            weight: 25,
+            offset_fireDamage: 15,
+            offset_MPRecoverTime: 0,
+            offset_bulletMinInterval: 0,
+            deltaStrength: 0,
+            effectiveTime: 720, //in seconds    
+        });
+    }
+});
+
+Q.Weapon.extend("BusterGun", {
+    init: function(p){
+        this._super(p, {
+            asset: "buster.png",
+            scale: 0.3,
+            weight: 25,
+            offset_fireDamage: 20,
+            offset_MPRecoverTime: 0,
+            offset_bulletMinInterval: 0,
+            deltaStrength: 0,
+            effectiveTime: 720, //in seconds    
+        });
+    }
+});
 Q.Collectable.extend("InstantColl", {
     init: function(p, defaults){
         this._super(p, Q._defaults(defaults || {}, {

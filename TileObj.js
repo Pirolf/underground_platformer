@@ -16,9 +16,7 @@ Q.Sprite.extend("Door", {
     this.on("sensor");
   },
   findRandomDoor: function() {
-    //return this.stage.find(this.p.link);
     var results = Q("Door");
-    
     var sameDoor = true;
     var currDoor;
     while(sameDoor){
@@ -29,7 +27,6 @@ Q.Sprite.extend("Door", {
           return currDoor;
         }
     }
-   // return results.at(randomDoorIndex);
   },
   // When the player is in the door.
   sensor: function(colObj) {
