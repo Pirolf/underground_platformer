@@ -104,15 +104,9 @@ Q.Sprite.extend("Enemy", {
         }else if(this.p.itemDropped && (!this.p.dropping)){
             var ad = this.p.attachedDroppable;
             ad.p.spawnTimer ++;
-            if(ad.p.spawnTimer < this.p.DEAD_TIME *48/1000){           
-            }else{
+            if(ad.p.spawnTimer >= this.p.DEAD_TIME * 48/1000.0){
                this.p.dropping = true;
-               if(ad.p.type === Q.SPRITE_WEAPON){
-                    player = Q("Player").first();
-                    Q.stage().insert(ad);
-               }else{
-                    Q.stage().insert(ad);
-               }
+               Q.stage().insert(ad);
             }    
         }
         
@@ -123,7 +117,7 @@ Q.Sprite.extend("Enemy", {
            if(!this.p.asset) {
                 this.play("enemy_walk_right");
             }
-        }else if(this.p.x + (this.p.w)/2 > (this.p.rightBound + 1) * 64){
+        }else if(this.p.x + (this.p.w)/2 >= (this.p.rightBound + 1) * 64){
             this.p.x = (this.p.rightBound + 1) * 64 - (this.p.w)/2;
             this.p.vx = -this.p.vx;
             if(!this.p.asset) {
@@ -146,17 +140,18 @@ Q.Sprite.extend("Enemy", {
                 }        
             }     
             return;
-        }else if(this.p.vx < 0){
+        }
+        if(this.p.vx < 0){
           if(!this.p.asset){
             this.play('enemy_walk_left');  
           }else{
-            if(this.p.flip === "") this.p.flip = "x";
+            this.p.flip = "x";
           }
         }else{
           if(!this.p.asset){
             this.play("enemy_walk_right");
           }else{
-            if(this.p.flip === "x") this.p.flip = "";
+            this.p.flip = "";
           }
         }
         

@@ -29,7 +29,6 @@
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
-    //var player = Q("Player").first({vx:0,vy:0});
 
     vp = stage.add("viewport");
     vp.follow(Q("Player").first(), {x: true, y:true}, boundingBox);
