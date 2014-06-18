@@ -195,6 +195,26 @@ Q.Enemy.extend("Bat", {
         });
     }
 });
+Q.Enemy.extend("EvilGhost", {
+    init: function(p){
+        this._super(p, {
+            asset: "evilGhost.png",
+            flip:"x",
+            vx: 250,
+            gravity: 0,
+        });
+    }
+});
+
+Q.Enemy.extend("PurpleEye", {
+    init:function(p){
+        this._super(p, {
+            asset: "purpleEye.png",
+            flip: "x",
+            vx: 200,
+        });
+    }
+});
 Q.Enemy.extend("Skeleton", {
     init: function(p){
         this._super(p, {       

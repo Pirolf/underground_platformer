@@ -131,11 +131,13 @@
             this.p.bulletFiredTimer++;
             
             //check left boundary
-            if(this.p.x < 16){
-                this.p.x = 16;
+            if(this.p.x < boundingBox.minX){
+                this.p.x = boundingBox.minX;
             }
             if(this.p.y <= 0){
                 this.p.y = 0;
+            }else if(this.p.y >= boundingBox.maxY){
+                this.p.y = boundingBox.maxY;
             }
             
             if(this.p.hasWeapon && this.p.weapon){

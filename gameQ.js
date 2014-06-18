@@ -13,7 +13,7 @@
     var facingRight = true;
     var currTotalWeight = 0;
     var vp; //viewport
-    var boundingBox = {minX:16, minY:0};
+    var boundingBox = {minX:16, minY:0, maxX:300*64, maxY: 55*64};
     //constants
     Q.SPRITE_PLAYER = 1;
     Q.SPRITE_COLLECTABLE = 2;
@@ -64,11 +64,13 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("buster.png");
     Q.compileSheets("robotCar.png");
     Q.compileSheets("bat.png");
+    Q.compileSheets("evilGhost.png");
+    Q.compileSheets("purpleEye.png");
 
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
      "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
      "skeleton-36_48.png", "robotCar.png", "shotgun.png", "mediumGun.png", "longScifiGun.png",
-      "buster.png", "bat.png"], function(){     
+      "buster.png", "bat.png", "evilGhost.png", "purpleEye.png"], function(){     
         var redPotion = new Q.Potion_red();
         var bluePotion = new Q.Potion_blue();
         var shotgun = new Q.Shotgun();
