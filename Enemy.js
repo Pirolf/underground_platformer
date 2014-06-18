@@ -6,6 +6,8 @@ Q.Sprite.extend("Enemy", {
             type: Q.SPRITE_ENEMY,
             frame: 1,
             //speed:300,
+            accelerateSeeingPlayer: false,
+            speedLimit: 500,
             vx: -100,
             health: 10,
             //ax: -100
@@ -17,7 +19,8 @@ Q.Sprite.extend("Enemy", {
             dead:false,
             collisionMask: Q.SPRITE_DEFAULT,
             DEAD_TIME: 2000,
-            health: 20
+            health: 20,
+            expPoints: 0,
         }));
         this.add("2d, aiBounce, animation, tween"); 
         this.on("bump.top",this,"die");
@@ -78,6 +81,10 @@ Q.Sprite.extend("Enemy", {
         }
     },
     die: function(col) {
+        player = Q("Player").first();
+        player.p.score += this.p.expPoints;
+        Q.stageScene('hud', 2, player.p);
+
         if(col.className && col.isA("Bullet")){
             this.p.vx=this.p.vy=0;
             this.p.dead = true;
@@ -92,7 +99,7 @@ Q.Sprite.extend("Enemy", {
             this.__assignDroppable();
         }
     },
-    step: function(dt) {   
+    step: function(delta) {   
         if((!this.p.itemDropped) && this.p.dropObj){
             this.p.itemDropped = true;
             this.p.attachedDroppable = new Q[currClassName]({         
@@ -141,18 +148,34 @@ Q.Sprite.extend("Enemy", {
             }     
             return;
         }
+
         if(this.p.vx < 0){
+            
           if(!this.p.asset){
-            this.play('enemy_walk_left');  
+            this.play('enemy_walk_left');
+             
+            if(this.p.accelerateSeeingPlayer && Math.abs(this.p.vx) < this.p.speedLimit){
+               this.p.vx -= delta * this.p.ax; 
+            }
+            
           }else{
             this.p.flip = "x";
           }
         }else{
           if(!this.p.asset){
             this.play("enemy_walk_right");
+            
+            if(this.p.accelerateSeeingPlayer && Math.abs(this.p.vx) < this.p.speedLimit){
+               this.p.vx += delta * this.p.ax;   
+            }
+            
           }else{
             this.p.flip = "";
           }
+        }
+
+        if(Math.abs(this.p.vx) >= this.p.speedLimit){
+            this.p.vx = 200;//to be reset
         }
         
     },
@@ -181,6 +204,8 @@ Q.Enemy.extend("RobotCar", {
             asset: "robotCar.png",
             flip: "x",
             vx: 100,
+            damagePoints: 15,
+            expPoints: 10,
             points: [[-22, -24], [-22, 24], [22, 24], [22, -24]],
         });
     }
@@ -191,6 +216,8 @@ Q.Enemy.extend("Bat", {
             asset: "bat.png",
             flip: "x",
             vx: 200,
+            expPoints: 20,
+            damagePoints: 15,
             gravity: 0,
         });
     }
@@ -200,7 +227,9 @@ Q.Enemy.extend("EvilGhost", {
         this._super(p, {
             asset: "evilGhost.png",
             flip:"x",
-            vx: 250,
+            vx: 150,
+            damagePoints: 25,
+            expPoints: 15,
             gravity: 0,
         });
     }
@@ -211,6 +240,8 @@ Q.Enemy.extend("PurpleEye", {
         this._super(p, {
             asset: "purpleEye.png",
             flip: "x",
+            damageMp: 40,
+            expPoints: 15,
             vx: 200,
         });
     }
@@ -223,11 +254,15 @@ Q.Enemy.extend("Skeleton", {
             scale:2,
             speed: 800,
             damagePoints:30,
+            damageMp:10,
+            expPoints: 20,
             health: 50,
+            accelerateSeeingPlayer: true,
+            speedLimit: 550,
+            ax: 20,
             hasDeadAnim: true,
             //points: [[-1/2, 0], [-1/2, 1], [1/2, 1], [1/2, 0]],
             points: [[-9, -24], [-9, 24], [9, 24], [9, -24]],
         });
-        //this.size(false);
     }
 });

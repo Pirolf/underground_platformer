@@ -33391,12 +33391,6 @@
     <property name="rightBound" value="31"/>
    </properties>
   </object>
-  <object gid="181" x="640" y="1600">
-   <properties>
-    <property name="leftBound" value="5"/>
-    <property name="rightBound" value="11"/>
-   </properties>
-  </object>
   <object gid="182" x="1024" y="1280">
    <properties>
     <property name="leftBound" value="14"/>
@@ -33408,6 +33402,12 @@
    <properties>
     <property name="leftBound" value="13"/>
     <property name="rightBound" value="25"/>
+   </properties>
+  </object>
+  <object gid="181" x="448" y="1600">
+   <properties>
+    <property name="leftBound" value="5"/>
+    <property name="rightBound" value="10"/>
    </properties>
   </object>
  </objectgroup>

@@ -6,7 +6,7 @@
     .touch();                          // Add in touch support (for the UI)
     Q.enableSound();
     Q.setImageSmoothing(false);
-    //Q.debug = true;
+    Q.debug = true;
     //Q.debugFull = true;
     //global vars
     //var isDown = false;
