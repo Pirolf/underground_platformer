@@ -5,9 +5,10 @@ Q.Sprite.extend("Enemy", {
             sheet: p.sprite,
             type: Q.SPRITE_ENEMY,
             frame: 1,
-            //speed:300,
+            speed:300,
             accelerateSeeingPlayer: false,
             speedLimit: 500,
+            speedMin: 1, //by default speedMin == original speed, here it's one just to avoid > max
             vx: -100,
             health: 10,
             //ax: -100
@@ -149,33 +150,37 @@ Q.Sprite.extend("Enemy", {
             return;
         }
 
-        if(this.p.vx < 0){
-            
+        if(this.p.vx < 0){         
           if(!this.p.asset){
             this.play('enemy_walk_left');
-             
-            if(this.p.accelerateSeeingPlayer && Math.abs(this.p.vx) < this.p.speedLimit){
-               this.p.vx -= delta * this.p.ax; 
+            if(this.p.ax !== 0 && this.p.accelerateSeeingPlayer ){
+               if(Math.abs(this.p.vx) <= this.p.speedLimit 
+                ){
+                    this.p.vx -= delta * this.p.ax; 
+               }else{
+                //this.p.ax *= -1;
+                this.p.vx += delta * this.p.ax;
+               }
+               
             }
-            
           }else{
             this.p.flip = "x";
           }
-        }else{
+        }else if(this.p.vx >= 0){
           if(!this.p.asset){
-            this.play("enemy_walk_right");
-            
-            if(this.p.accelerateSeeingPlayer && Math.abs(this.p.vx) < this.p.speedLimit){
-               this.p.vx += delta * this.p.ax;   
+            this.play("enemy_walk_right");        
+            if(this.p.ax > 0 && this.p.accelerateSeeingPlayer ){
+                if( Math.abs(this.p.vx) <= this.p.speedLimit ){
+                    this.p.vx += delta * this.p.ax; 
+                }else{
+                   // this.p.ax *= -1;
+                    this.p.vx -= delta * this.p.ax;
+                }
+                 
             }
-            
           }else{
             this.p.flip = "";
           }
-        }
-
-        if(Math.abs(this.p.vx) >= this.p.speedLimit){
-            this.p.vx = 200;//to be reset
         }
         
     },
@@ -186,7 +191,11 @@ Q.Enemy.extend("Ghost", {
             sheet: "ghost_25_35",
             sprite: "ghost_25_35",
             damageMp: 10,
-            health: 20
+            health: 20,
+            speed: 100,
+            speedMin: 100,
+            speedLimit: 200,
+            ax: 0,
         });
     }
 });
@@ -195,6 +204,10 @@ Q.Enemy.extend("Ghost_red", {
         this._super(p, {       
             sheet: "ghost_red_25_35",
             sprite: "ghost_red_25_35",
+            speed: 100,
+            speedMin: 100,
+            speedLimit: 200,
+            ax: 0,
         });
     }
 });
@@ -204,6 +217,9 @@ Q.Enemy.extend("RobotCar", {
             asset: "robotCar.png",
             flip: "x",
             vx: 100,
+            speedMin: 100,
+            speedLimit: 200,
+            ax: 35,
             damagePoints: 15,
             expPoints: 10,
             points: [[-22, -24], [-22, 24], [22, 24], [22, -24]],
@@ -216,6 +232,9 @@ Q.Enemy.extend("Bat", {
             asset: "bat.png",
             flip: "x",
             vx: 200,
+            speedMin: 200,
+            speedLimit: 300,
+            ax: 25,
             expPoints: 20,
             damagePoints: 15,
             gravity: 0,
@@ -227,7 +246,10 @@ Q.Enemy.extend("EvilGhost", {
         this._super(p, {
             asset: "evilGhost.png",
             flip:"x",
-            vx: 150,
+            vx: 60,
+            speedMin: 60,
+            speedLimit: 120,
+            ax: 15,
             damagePoints: 25,
             expPoints: 15,
             gravity: 0,
@@ -242,7 +264,10 @@ Q.Enemy.extend("PurpleEye", {
             flip: "x",
             damageMp: 40,
             expPoints: 15,
-            vx: 200,
+            vx: 100,
+            speedMin: 100,
+            speedLimit: 150,
+            ax: 15,
         });
     }
 });
@@ -252,14 +277,15 @@ Q.Enemy.extend("Skeleton", {
             sheet: "skeleton_36_48",
             sprite: "skeleton_36_48",
             scale:2,
-            speed: 800,
             damagePoints:30,
             damageMp:10,
             expPoints: 20,
             health: 50,
             accelerateSeeingPlayer: true,
-            speedLimit: 550,
             ax: 20,
+            speed: 100,
+            speedMin: 100,
+            speedLimit: 200,
             hasDeadAnim: true,
             //points: [[-1/2, 0], [-1/2, 1], [1/2, 1], [1/2, 0]],
             points: [[-9, -24], [-9, 24], [9, 24], [9, -24]],
