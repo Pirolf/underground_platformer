@@ -21,11 +21,11 @@
     Q.SPRITE_DOOR = 8;
     Q.SPRITE_BULLET = 16;
     Q.SPRITE_WEAPON = 32;
-
+    Q.END_OF_GAME_STATS = {HP: 0, MP: 0, SCORE: 0}
     Q.collClass = new Array();
-   Q.component("coll", function(){
+    Q.component("coll", function(){
 
-   });
+    });
 // Load TMX File as a scene
 Q.scene("level1", function(stage){
     Q.stageTMX("underground.tmx", stage);
@@ -33,10 +33,30 @@ Q.scene("level1", function(stage){
     vp = stage.add("viewport");
     vp.follow(Q("Player").first(), {x: true, y:true}, boundingBox);
 });
+
+Q.scene('endGame',function(stage) {
+  var box = stage.insert(new Q.UI.Container({
+        x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+    }));
+  
+  var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
+     label: "Play Again" })) ;
+
+  box.insert(new Q.UI.Text({x: 10, y: -10- button.p.h, label: "Score: " + Q.END_OF_GAME_STATS.SCORE, color: "white"}));
+  var label = box.insert(new Q.UI.Text({x:10, y: -50 - button.p.h, 
+    label: stage.options.label }));
+    button.on("click",function() {
+        Q.clearStages();
+        Q.stageScene('level1');
+    });
+  box.fit(20);
+});
+
+
 Q.scene('hud',function(stage) {
   var container = stage.insert(new Q.UI.Container({
     x: 50, y: 0
-  }));
+}));
 
   var score = container.insert(new Q.UI.Text({x:200, y: 20,
     label: "Score: " + stage.options.score, color: "white" }));
@@ -70,7 +90,7 @@ Q.loadTMX("underground.tmx", function(){
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
      "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
      "skeleton-36_48.png", "robotCar.png", "shotgun.png", "mediumGun.png", "longScifiGun.png",
-      "buster.png", "bat.png", "evilGhost.png", "purpleEye.png"], function(){     
+     "buster.png", "bat.png", "evilGhost.png", "purpleEye.png"], function(){     
         var redPotion = new Q.Potion_red();
         var bluePotion = new Q.Potion_blue();
         var shotgun = new Q.Shotgun();
@@ -97,25 +117,25 @@ Q.loadTMX("underground.tmx", function(){
             climb: {frames: [26, 27], rate: 1/4, flip:false, loop:true},
             climb_still: {frames: [26], rate: 1, flip:false, loop:false}
         });
-        Q.animations("ghost_25_35",{
-            enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
-            enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
-        });
-        Q.animations("ghost_red_25_35",{
-            enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
-            enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
-        });
-        Q.animations("skeleton_36_48",{
-            enemy_walk_left: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:"x", rate:1/12, loop:true},
-            enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true},
-            enemy_dead_left: {frames:[15,16,17,18,19], flip:"x", rate: 1, loop:false},
-            enemy_dead_right:{frames:[15,16,17,18,19], flip:false, rate:1, loop:false},
-        });
-        Q.animations("explosions", {
-            bullet_shoot: {frames:[7,6,5,4,3,2,2,2,2,2,2,2,2,2,2,2], rate:1/5, loop:false, next:"bullet_fade"},
-            bullet_hit: {frames: [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22], rate:1/24, loop:false},
-            bullet_fade: {frames: [2], rate:1, loop:true}
-        });
+Q.animations("ghost_25_35",{
+    enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
+    enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
+});
+Q.animations("ghost_red_25_35",{
+    enemy_walk_left: {frames:[5,6,7,8,9], flip:"x", rate: 1/2, loop:true},
+    enemy_walk_right: {frames:[5,6,7,8,9], flip:false, rate: 1/2, loop:true}
+});
+Q.animations("skeleton_36_48",{
+    enemy_walk_left: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:"x", rate:1/12, loop:true},
+    enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true},
+    enemy_dead_left: {frames:[15,16,17,18,19], flip:"x", rate: 1, loop:false},
+    enemy_dead_right:{frames:[15,16,17,18,19], flip:false, rate:1, loop:false},
+});
+Q.animations("explosions", {
+    bullet_shoot: {frames:[7,6,5,4,3,2,2,2,2,2,2,2,2,2,2,2], rate:1/5, loop:false, next:"bullet_fade"},
+    bullet_hit: {frames: [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22], rate:1/24, loop:false},
+    bullet_fade: {frames: [2], rate:1, loop:true}
+});
 
 Q.stageScene("level1");
 Q.stageScene('hud', 2, Q('Player').first().p);
