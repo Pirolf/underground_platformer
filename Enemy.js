@@ -36,7 +36,7 @@ Q.Sprite.extend("Enemy", {
         }
         this.p.dropProccessed = true;
         var inserted = false;
-        var ran = Math.floor(Math.random() * currTotalWeight);
+        var ran = Math.floor(Math.random() * 500);
         console.log("ran :" + ran);
         for(var key in Q.collClass){
             currClassName = (Q.collClass)[key]["name"];

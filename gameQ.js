@@ -13,7 +13,7 @@
     var facingRight = true;
     var currTotalWeight = 0;
     var vp; //viewport
-    var boundingBox = {minX:16, minY:0, maxX:300*64, maxY: 55*64};
+    var boundingBox = {minX:16, minY:0, maxX:99*64, maxY: 54*64};
     //constants
     Q.SPRITE_PLAYER = 1;
     Q.SPRITE_COLLECTABLE = 2;

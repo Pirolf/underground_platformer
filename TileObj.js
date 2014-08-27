@@ -34,3 +34,11 @@ Q.Sprite.extend("Door", {
     colObj.p.door = this;
   }
 });
+//water
+Q.Sprite.extend("Water", {
+  init: function(p){
+    this._super(p, {
+      asset: "water.png",
+    });
+  },
+});

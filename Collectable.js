@@ -60,7 +60,7 @@ Q.Collectable.extend("Weapon", {
     init: function(p, defaults){
         this._super(p, Q._defaults(defaults || {}, {
             asset: "shotgun.png",
-             weight: 15,
+            weight: 15,
             type: Q.SPRITE_WEAPON,
             //gravity:0,
             x: 0,
@@ -81,7 +81,6 @@ Q.Collectable.extend("Weapon", {
         }));
     },
     sensor: function(colObj){
-        //console.log("shotgun sensor called");
         sameWeapon = false;
         if(this === colObj.p.weapon){
             sameWeapon = true;
@@ -169,7 +168,7 @@ Q.Weapon.extend("LongGun", {
         this._super(p, {
             asset: "longScifiGun.png",
             scale: 0.2,
-            weight: 25,
+            weight: 15,
             offset_fireDamage: 15,
             offset_MPRecoverTime: 0,
             offset_bulletMinInterval: 0,
@@ -184,7 +183,7 @@ Q.Weapon.extend("BusterGun", {
         this._super(p, {
             asset: "buster.png",
             scale: 0.3,
-            weight: 25,
+            weight: 20,
             offset_fireDamage: 20,
             offset_MPRecoverTime: 0,
             offset_bulletMinInterval: 0,
@@ -238,7 +237,6 @@ Q.InstantColl.extend("Potion_red", {
         this._super(p, Q._defaults(defaults || {}, {
             asset: "potion_red_20_20.png",
             weight: 15,
-            //sprite:"potion_red_12_12",
             deltaStrength: 5,
         }));
     },

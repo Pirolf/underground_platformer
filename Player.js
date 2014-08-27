@@ -19,7 +19,7 @@
             standingPoints: [[8, 0], [8, -32], [8, 32], [-8, 32], [-8, -32],[-8, 0]],
             damage: 5,
             immune: false,
-            BULLET_MIN_INTERVAL: 2000,
+            BULLET_MIN_INTERVAL: 1000,
             bulletFiredTimer: 2000,
             mpRecoverTimer: 0,
                 MP_RECOVER_TIME: 24, //in frames
@@ -115,7 +115,7 @@
                 var newBullet = new Q.Bullet({ 
                     x: this.p.x + playerDir * (this.p.w)/4,
                     y: this.p.y + (this.p.h)/8,
-                    vx: playerDir * 200,
+                    vx: playerDir * 400,
                     vy: 0,
                     intervalTimer: 0,
                     shot: true,
@@ -154,10 +154,6 @@
     step: function(delta){
             var processed = false;
             if (this.p.strength <= 0) {
-               // this.resetLevel();
-               //game ends: player dies
-               //Q.clearStages();
-               // this.showGameStats();
                this.updateEndOfGameStats();
                 Q.stageScene("endGame", 1, { label: "Game Over!" }); 
                 this.destroy();

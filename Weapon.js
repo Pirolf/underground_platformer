@@ -48,4 +48,4 @@ Q.Sprite.extend("Bullet", {
         }     
     },
 });
-Q.Bullet.CONSUME_MP = 30;
+Q.Bullet.CONSUME_MP = 10;
