@@ -196,6 +196,7 @@ Q.Enemy.extend("Ghost", {
             speedMin: 100,
             speedLimit: 200,
             ax: 0,
+            gravity:0
         });
     }
 });
@@ -208,6 +209,7 @@ Q.Enemy.extend("Ghost_red", {
             speedMin: 100,
             speedLimit: 200,
             ax: 0,
+            gravity:0
         });
     }
 });

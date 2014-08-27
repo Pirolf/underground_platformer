@@ -34,21 +34,22 @@ Q.scene("level1", function(stage){
     vp.follow(Q("Player").first(), {x: true, y:true}, boundingBox);
 });
 
+//end game scene
 Q.scene('endGame',function(stage) {
   var box = stage.insert(new Q.UI.Container({
-        x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
-    }));
+    x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+}));
   
   var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
-     label: "Play Again" })) ;
+   label: "Play Again" })) ;
 
   box.insert(new Q.UI.Text({x: 10, y: -10- button.p.h, label: "Score: " + Q.END_OF_GAME_STATS.SCORE, color: "white"}));
   var label = box.insert(new Q.UI.Text({x:10, y: -50 - button.p.h, 
     label: stage.options.label }));
-    button.on("click",function() {
-        Q.clearStages();
-        Q.stageScene('level1');
-    });
+  button.on("click",function() {
+    Q.clearStages();
+    Q.stageScene('level1');
+});
   box.fit(20);
 });
 
@@ -88,9 +89,9 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("purpleEye.png");
 
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
-     "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
-     "skeleton-36_48.png", "robotCar.png", "shotgun.png", "mediumGun.png", "longScifiGun.png",
-     "buster.png", "bat.png", "evilGhost.png", "purpleEye.png"], function(){     
+       "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
+       "skeleton-36_48.png", "robotCar.png", "shotgun.png", "mediumGun.png", "longScifiGun.png",
+       "buster.png", "bat.png", "evilGhost.png", "purpleEye.png"], function(){     
         var redPotion = new Q.Potion_red();
         var bluePotion = new Q.Potion_blue();
         var shotgun = new Q.Shotgun();
