@@ -27,8 +27,6 @@ Q.Sprite.extend("Enemy", {
         this.on("bump.top",this,"die");
         this.on("hit.sprite",this,"hit"); 
         this.on("bullet.hit", this, "hitByBullet"); 
-
-       
     },
     __assignDroppable: function(){
         if(this.p.dropProccessed){
@@ -83,6 +81,9 @@ Q.Sprite.extend("Enemy", {
     },
     die: function(col) {
         player = Q("Player").first();
+        if(!player){
+            return;
+        }
         player.p.score += this.p.expPoints;
         Q.stageScene('hud', 2, player.p);
 
@@ -100,7 +101,7 @@ Q.Sprite.extend("Enemy", {
             this.__assignDroppable();
         }
     },
-    step: function(delta) {   
+    dropItem: function(){
         if((!this.p.itemDropped) && this.p.dropObj){
             this.p.itemDropped = true;
             this.p.attachedDroppable = new Q[currClassName]({         
@@ -117,22 +118,9 @@ Q.Sprite.extend("Enemy", {
                Q.stage().insert(ad);
             }    
         }
-        
-        //tile boundary detection
-        if(this.p.x - (this.p.w)/2 < (this.p.leftBound) * 64){
-           this.p.x = (this.p.leftBound) * 64 + (this.p.w)/2;
-           this.p.vx = -this.p.vx;
-           if(!this.p.asset) {
-                this.play("enemy_walk_right");
-            }
-        }else if(this.p.x + (this.p.w)/2 >= (this.p.rightBound + 1) * 64){
-            this.p.x = (this.p.rightBound + 1) * 64 - (this.p.w)/2;
-            this.p.vx = -this.p.vx;
-            if(!this.p.asset) {
-                this.play("enemy_walk_left");
-            }
-        }else if(this.p.dead) {
-            this.del('2d, aiBounce');
+    },
+    doDeadAnimation: function(){
+        this.del('2d, aiBounce');
             var dir = this.__getDirection();
             this.p.deadTimer++;
             if(this.p.hasDeadAnim){
@@ -147,21 +135,61 @@ Q.Sprite.extend("Enemy", {
                   this.animate({"opacity": this.p.death_opacity}, 0);  
                 }        
             }     
-            return;
+    },
+    //return true if dead, else false
+    detectBoundary: function(){
+         //tile boundary detection
+        if(this.p.x - (this.p.w)/2 < (this.p.leftBound) * 64){
+           this.p.x = (this.p.leftBound) * 64 + (this.p.w)/2;
+           this.p.vx = -this.p.vx;
+           if(!this.p.asset) {
+                this.play("enemy_walk_right");
+            }
+        }else if(this.p.x + (this.p.w)/2 >= (this.p.rightBound + 1) * 64){
+            this.p.x = (this.p.rightBound + 1) * 64 - (this.p.w)/2;
+            this.p.vx = -this.p.vx;
+            if(!this.p.asset) {
+                this.play("enemy_walk_left");
+            }
+        }else if(this.p.dead) {
+            this.doDeadAnimation();
+            return true;
         }
-
+        return false;
+    },
+    attackOnSeeingPlayer: function(){
+        if(!this.p.activeAttack){
+            return false;
+        }
+        if(!Q('Player').first()){
+            return false;
+        }
+        var xdistance = this.p.x - Q('Player').first().p.x;
+        var ydistance = this.p.y - Q('Player').first().p.y;
+        if(Math.abs(xdistance) <= this.p.attackDistance && Math.abs(ydistance) <= 70){
+            if(xdistance < 0){ //enemy is to the left of the player
+                var totalDamage = this.p.additionalAttackDamage + this.p.damagePoints;
+                Q('Player').first().p.strength -= totalDamage;
+                this.play("enemy_attack_left");
+            }else{
+                this.play("enemy_attack_right");
+            }
+            return true;
+        }
+        return false;
+        //end of if
+    },
+    processWalking: function(delta){
+        //walk left/right logic
         if(this.p.vx < 0){         
           if(!this.p.asset){
             this.play('enemy_walk_left');
             if(this.p.ax !== 0 && this.p.accelerateSeeingPlayer ){
-               if(Math.abs(this.p.vx) <= this.p.speedLimit 
-                ){
+               if(Math.abs(this.p.vx) <= this.p.speedLimit ){
                     this.p.vx -= delta * this.p.ax; 
                }else{
-                //this.p.ax *= -1;
                 this.p.vx += delta * this.p.ax;
                }
-               
             }
           }else{
             this.p.flip = "x";
@@ -173,18 +201,29 @@ Q.Sprite.extend("Enemy", {
                 if( Math.abs(this.p.vx) <= this.p.speedLimit ){
                     this.p.vx += delta * this.p.ax; 
                 }else{
-                   // this.p.ax *= -1;
                     this.p.vx -= delta * this.p.ax;
                 }
-                 
             }
           }else{
             this.p.flip = "";
           }
         }
+        //end of walk left/right logic
+    },
+    step: function(delta) {   
+        this.dropItem();     
+        if(this.detectBoundary()){
+            return;
+        }
+        if(this.attackOnSeeingPlayer()){
+            return;
+        }
+        this.processWalking(delta);
         
     },
 });//End of Enemy
+
+
 Q.Enemy.extend("Ghost", {
     init: function(p){
         this._super(p, {       
@@ -292,5 +331,27 @@ Q.Enemy.extend("Skeleton", {
             //points: [[-1/2, 0], [-1/2, 1], [1/2, 1], [1/2, 0]],
             points: [[-9, -24], [-9, 24], [9, 24], [9, -24]],
         });
+    }
+});
+
+Q.Enemy.extend("FlamingWizard", {
+    init: function(p){
+        this._super(p, {
+            sheet: "FlamingWizard",
+            sprite: "FlamingWizard",
+            damagePoints: 20,
+            damageMp: 10,
+            expPoints: 30,
+            health: 70,
+            ax: 20,
+            speed: 80,
+            speedMin: 80,
+            speedLimit: 200,
+            hasDeadAnim: false,
+            activeAttack:true,
+            attackDistance: 100,
+            additionalAttackDamage: 10,
+            points: [[-40, -55], [-40, 55], [40, 55], [40, -55]],
+        }) ;    
     }
 });

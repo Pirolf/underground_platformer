@@ -324,6 +324,24 @@
  <tileset firstgid="183" name="water" tilewidth="128" tileheight="32">
   <image source="../images/water.png" width="128" height="64"/>
  </tileset>
+ <tileset firstgid="185" name="FlamingWizard" tilewidth="102" tileheight="110">
+  <image source="../images/FlamingWizard.png" width="317" height="110"/>
+  <tile id="0">
+   <properties>
+    <property name="Class" value="FlamingWizard"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Class" value="FlamingWizard"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="Class" value="FlamingWizard"/>
+   </properties>
+  </tile>
+ </tileset>
  <layer name="wall" width="300" height="55">
   <properties>
    <property name="collision" value="true"/>
@@ -33967,6 +33985,12 @@
    <properties>
     <property name="leftBound" value="52"/>
     <property name="rightBound" value="59"/>
+   </properties>
+  </object>
+  <object gid="187" x="465" y="829">
+   <properties>
+    <property name="leftBound" value="5"/>
+    <property name="rightBound" value="11"/>
    </properties>
   </object>
  </objectgroup>

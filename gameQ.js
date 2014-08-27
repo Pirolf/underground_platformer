@@ -87,11 +87,11 @@ Q.loadTMX("underground.tmx", function(){
     Q.compileSheets("bat.png");
     Q.compileSheets("evilGhost.png");
     Q.compileSheets("purpleEye.png");
-
+    Q.compileSheets("FlamingWizard.png");
     Q.load(["platformer_sprites0.png", "37_walk.jpg", "explosionSheet.png",
        "ghost_25_35.png", "ghost_red_25_35.png", "potion_red_20_20.png", "potion_blue_20_20.png",
        "skeleton-36_48.png", "robotCar.png", "shotgun.png", "mediumGun.png", "longScifiGun.png",
-       "buster.png", "bat.png", "evilGhost.png", "purpleEye.png"], function(){     
+       "buster.png", "bat.png", "evilGhost.png", "purpleEye.png", "FlamingWizard.png"], function(){     
         var redPotion = new Q.Potion_red();
         var bluePotion = new Q.Potion_blue();
         var shotgun = new Q.Shotgun();
@@ -131,6 +131,12 @@ Q.animations("skeleton_36_48",{
     enemy_walk_right: {frames:[2, 3, 4, 5, 6, 7, 8, 9], flip:false, rate:1/12, loop:true},
     enemy_dead_left: {frames:[15,16,17,18,19], flip:"x", rate: 1, loop:false},
     enemy_dead_right:{frames:[15,16,17,18,19], flip:false, rate:1, loop:false},
+});
+Q.animations("FlamingWizard", {
+    enemy_walk_left: {frames:[2], flip: false, rate:1/12, loop:true},
+    enemy_walk_right: {frames:[2], flip:"x", rate:1/12, loop:true},
+    enemy_attack_left: {frames:[1], flip: false, rate:1/12, loop:true},
+    enemy_attack_right: {frames:[1], flip:"x", rate:1/12, loop:true},
 });
 Q.animations("explosions", {
     bullet_shoot: {frames:[7,6,5,4,3,2,2,2,2,2,2,2,2,2,2,2], rate:1/5, loop:false, next:"bullet_fade"},
