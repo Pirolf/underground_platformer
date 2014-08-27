@@ -101,9 +101,6 @@
         this.p.magicPoints -= enemy.p.damageMp;
         this.p.magicPoints = Math.max(0, this.p.magicPoints);
         Q.stageScene('hud', 2, this.p);
-
-            //console.log(this.p.strength);  
-            //console.log(this.p.magicPoints);
             this.p.immuneTimer = 0;
             this.p.immuneOpacity = 1;
 
@@ -127,25 +124,6 @@
             }
 
         },
-    //TODO 
-    showGameStats: function(){
-            var stats = [{statName: "HP", val: this.p.strength}, {statName: "MP", val:this.p.magicPoints}, {statName: "Score", val: this.p.score}];
-            var liHTML = "";
-            for(var i = 0; i < stats.length; i++){
-                var stat = stats[i];
-                liHTML += "<li><span>" + stat.statName + "</span><span>" + stat.val + "</span></li>";
-            }
-           $("#gameStatsDialog ul").html(liHTML);
-
-           $("button#tryAgain").click(function(){
-                     //$('#gameStatsDialog').css('display', 'none');
-                     $('#gameStatsDialog').dialog("close");
-                     
-                     Q('Player').first().resetLevel();
-            });
-           $( "#gameStatsDialog" ).dialog();
-            Q.stageScene('hud', 2, this.p);
-    },
     updateEndOfGameStats: function(){
         Q.END_OF_GAME_STATS.HP = this.p.strength;
         Q.END_OF_GAME_STATS.MP = this.p.magicPoints;

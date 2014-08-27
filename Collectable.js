@@ -122,13 +122,11 @@ Q.Collectable.extend("Weapon", {
         if(this.p.pickedUp){
             if(this.p.onPlayerTimer < this.p.effectiveTime){
                 this.p.onPlayerTimer++;
-               // console.log("onPlayerTimer: " + this.p.onPlayerTimer);  
             }else{
               //effective time passed, remove weapon and destroy
                 player = Q("Player").first();
                 player.p.hasWeapon = false;
                 this.destroy();
-               // Q.stage().forceRemove(this); 
                 console.log(this.className + " effective time passed, weapon removed");               
             }                  
         }
