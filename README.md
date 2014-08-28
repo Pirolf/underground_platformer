@@ -1,4 +1,4 @@
-underground_platformer
+Underground!
 ======================
 
 Platformer game with Quintus
