@@ -3,6 +3,8 @@ underground_platformer
 
 Platformer game with Quintus
 
+To Play: http://yuchengtu.com/plattt/
+
 Controls:
 ======================
 Left / Right Arrow : move left/right
