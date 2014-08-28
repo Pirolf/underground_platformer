@@ -1,4 +1,5 @@
 //jQuery(document).ready(function(){
+//$("button#start_plattt").click(function(){
     var Q = Quintus()                          // Create a new engine instance
     .include("Sprites, Anim, Audio, Scenes, Input, 2D, Touch, UI, TMX") // Load any needed modules
     .setup({maximize: true})                           // Add a canvas element onto the page
@@ -39,7 +40,6 @@ Q.scene('endGame',function(stage) {
   var box = stage.insert(new Q.UI.Container({
     x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
 }));
-  
   var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
    label: "Play Again" })) ;
 
@@ -53,14 +53,14 @@ Q.scene('endGame',function(stage) {
   box.fit(20);
 });
 
-
 Q.scene('hud',function(stage) {
   var container = stage.insert(new Q.UI.Container({
     x: 50, y: 0
 }));
-
+  
+  //container.insert(fbShareButton);
   var score = container.insert(new Q.UI.Text({x:200, y: 20,
-    label: "Score: " + stage.options.score, color: "white" }));
+    label: "Score: " + stage.options.score, color: "white"}));
 
   var strength = container.insert(new Q.UI.Text({x:50, y: 20,
     label: "Health: " + stage.options.strength + '%', color: "white" }));
@@ -152,4 +152,4 @@ Q.stageScene('hud', 2, Q('Player').first().p);
 
 
 
-//})
+//});

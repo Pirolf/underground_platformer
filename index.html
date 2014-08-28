@@ -1,32 +1,53 @@
 <html>
-  <head>
-    <!-- Pull the engine from the Quintus CDN or load it locally -->
-    <!-- (use quintus-all.min.js for production) -->
-    <!--script src="//code.jquery.com/jquery-1.11.0.min.js"></script-->
-    <!--link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css"-->
-    <!--link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css"-->
-    <link rel="stylesheet" href="lib/jquery-ui-smooth.css">
-    <link rel="stylesheet" href="lib/jqueryuistyle.css">
-    <link rel="stylesheet" href="Style.css">
-    <!--script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script-->
-    <script src="lib/jquery1.11.0.js"></script>
-    <script src="lib/jquery-ui.js"></script>
-    <script src='quintus-all.js'></script>
-    <style>
-      canvas { background-color: #5e81a2; }
+<head>
+  <!-- Pull the engine from the Quintus CDN or load it locally -->
+  <!-- (use quintus-all.min.js for production) -->
+  <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="Style.css">
+  <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+  <script src='quintus-all.js'></script>
+  <style>
+  canvas { background-color: #5e81a2; }
   </style>
-  </head>
-   <body>
-    <script src='gameQ.js'></script>
-    <script src='Player.js'></script>
-    <script src='Collectable.js'></script>
-    <script src='Enemy.js'></script>
-    
-    <script src='TileObj.js'></script>
-    <script src='Weapon.js'></script>
-    <script type="text/javascript">
+</head>
+<body>
+  <div id="fb-root"></div>
+  <script type="text/javascript">
 
-    </script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '477199645715814',
+      xfbml      : true,
+      version    : 'v2.0'
+    });
+  };
 
-   </body>
+  (function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "//connect.facebook.net/en_US/sdk.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
+
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=228992903959552&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+   var Q;
+  </script>
+  <script src='gameQ.js'></script>
+  <script src='Player.js'></script>
+  <script src='Collectable.js'></script>
+  <script src='Enemy.js'></script>
+
+  <script src='TileObj.js'></script>
+  <script src='Weapon.js'></script>
+
+</body>
 </html>

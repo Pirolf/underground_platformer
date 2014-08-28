@@ -1,3 +1,7 @@
 ul#statsList {
 	list-style: none
 }
+@font-face{
+	font-family: "Zombie";
+	src: url(../images/font_zombie/Zombie_Holocaust.ttf);
+}

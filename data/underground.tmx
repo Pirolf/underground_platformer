@@ -33923,13 +33923,13 @@
   <object gid="109" x="496" y="1269">
    <properties>
     <property name="leftBound" value="7"/>
-    <property name="rightBound" value="10"/>
+    <property name="rightBound" value="9.5"/>
    </properties>
   </object>
   <object gid="109" x="584" y="1305">
    <properties>
     <property name="leftBound" value="8"/>
-    <property name="rightBound" value="10"/>
+    <property name="rightBound" value="9.5"/>
    </properties>
   </object>
   <object gid="119" x="1692" y="1061">
@@ -33991,6 +33991,18 @@
    <properties>
     <property name="leftBound" value="5"/>
     <property name="rightBound" value="11"/>
+   </properties>
+  </object>
+  <object gid="187" x="2385" y="1971">
+   <properties>
+    <property name="leftBound" value="37"/>
+    <property name="rightBound" value="42"/>
+   </properties>
+  </object>
+  <object gid="180" x="2140" y="1714">
+   <properties>
+    <property name="leftBound" value="33"/>
+    <property name="rightBound" value="43"/>
    </properties>
   </object>
  </objectgroup>
