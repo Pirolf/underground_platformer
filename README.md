@@ -3,7 +3,7 @@ Underground!
 
 Platformer game with Quintus
 
-To Play: pirolf.github.io/underground_platformer
+To Play: https://pirolf.github.io/underground_platformer
 
 Controls:
 ======================
